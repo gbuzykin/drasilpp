@@ -4,6 +4,8 @@
 
 #include <type_traits>
 
+// NOLINTBEGIN(readability-identifier-naming*)
+
 namespace app3d::util {
 
 template<typename T>
@@ -190,3 +192,5 @@ void swap(app3d::util::ref_ptr<T>& p1, app3d::util::ref_ptr<T>& p2) noexcept {
     p1.swap(p2);
 }
 }  // namespace std
+
+// NOLINTEND(readability-identifier-naming*)

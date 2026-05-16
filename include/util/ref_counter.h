@@ -3,6 +3,8 @@
 #include <atomic>
 #include <cstdint>
 
+// NOLINTBEGIN(readability-identifier-naming*)
+
 namespace app3d::util {
 
 class ref_counter {
@@ -23,3 +25,5 @@ class ref_counter {
 };
 
 }  // namespace app3d::util
+
+// NOLINTEND(readability-identifier-naming*)

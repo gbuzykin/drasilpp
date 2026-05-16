@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <utility>
 
+// NOLINTBEGIN(readability-identifier-naming*)
+
 namespace app3d::util {
 
 template<typename T>
@@ -64,4 +66,7 @@ template<typename T>
 void swap(app3d::util::not_null<T>& p1, app3d::util::not_null<T>& p2) noexcept(std::is_nothrow_swappable_v<T>) {
     p1.swap(p2);
 }
+
 }  // namespace std
+
+// NOLINTEND(readability-identifier-naming*)

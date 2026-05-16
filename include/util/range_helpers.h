@@ -9,6 +9,8 @@
 #include <tuple>
 #include <type_traits>
 
+// NOLINTBEGIN(readability-identifier-naming*)
+
 namespace app3d::util {
 
 template<typename Range, typename Ty>
@@ -49,3 +51,5 @@ inline auto as_byte_span(Range&& r) {
 }
 
 }  // namespace app3d::util
+
+// NOLINTEND(readability-identifier-naming*)
