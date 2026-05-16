@@ -4,8 +4,6 @@
 #include "command_buffer.h"
 #include "dev_queue.h"
 
-#include <uxs/dynarray.h>
-
 namespace app3d::rel::vulkan {
 
 class RenderingDriver;
