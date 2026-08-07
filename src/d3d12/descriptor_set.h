@@ -2,7 +2,7 @@
 
 #include "pipeline_layout.h"
 
-namespace app3d::rel::d3d12 {
+namespace drasilpp::rel::d3d12 {
 
 class DescriptorSet final : public util::ref_counter, public IDescriptorSet {
  public:
@@ -34,4 +34,4 @@ class DescriptorSet final : public util::ref_counter, public IDescriptorSet {
     PipelineLayout::DescriptorSetHandles handles_{};
 };
 
-}  // namespace app3d::rel::d3d12
+}  // namespace drasilpp::rel::d3d12

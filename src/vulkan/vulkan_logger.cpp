@@ -57,7 +57,7 @@ const std::unordered_map<VkResult, std::string_view> g_result_text{
 };
 }
 
-std::string_view app3d::rel::vulkan::getVkResultText(VkResult result) {
+std::string_view drasilpp::rel::vulkan::getVkResultText(VkResult result) {
     auto it = g_result_text.find(result);
     return it != g_result_text.end() ? it->second : "";
 }

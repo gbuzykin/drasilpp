@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(
-  App3D
-  DESCRIPTION "Project for studying Vulkan and D3D12"
+  DrasilPP
+  DESCRIPTION "DrasilPP Game Infrastructure"
   LANGUAGES CXX)
 
 include(FetchContent)
@@ -70,16 +70,16 @@ FetchContent_MakeAvailable(uxs)
 endblock()
 
 # ##############################################################################
-# Add `app3d` build target
+# Add `drasilpp` build target
 
 if(WIN32)
-  set(APP3D_USE_PLATFORM WIN32)
+  set(DRASILPP_USE_PLATFORM WIN32)
 elseif(UNIX)
-  set(APP3D_USE_PLATFORM XCB)
+  set(DRASILPP_USE_PLATFORM XCB)
 endif()
 
-set(APP3D_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
-include_directories(${APP3D_INCLUDE_DIR})
+set(DRASILPP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
+include_directories(${DRASILPP_INCLUDE_DIR})
 include_directories(${PROJECT_BINARY_DIR}/generated)
 
 add_subdirectory(src/common)
@@ -89,30 +89,31 @@ if(WIN32)
   add_subdirectory(src/d3d12)
 endif()
 
-file(GLOB_RECURSE APP3D_SRC_FILES src/app3d/*.h;src/app3d/*.cpp)
+file(GLOB_RECURSE DRASILPP_SRC_FILES src/app/*.h;src/app/*.cpp)
 
-if(APP3D_USE_PLATFORM STREQUAL "WIN32")
-  file(GLOB_RECURSE APP3D_PLATFORM_SRC_FILES
+if(DRASILPP_USE_PLATFORM STREQUAL "WIN32")
+  file(GLOB_RECURSE DRASILPP_PLATFORM_SRC_FILES
        src/platform/win32/*.h;src/platform/win32/*.cpp)
-elseif(APP3D_USE_PLATFORM STREQUAL "XCB")
-  file(GLOB_RECURSE APP3D_PLATFORM_SRC_FILES
+elseif(DRASILPP_USE_PLATFORM STREQUAL "XCB")
+  file(GLOB_RECURSE DRASILPP_PLATFORM_SRC_FILES
        src/platform/xcb/*.h;src/platform/xcb/*.cpp)
 endif()
 
-add_executable(app3d ${APP3D_SRC_FILES} ${APP3D_PLATFORM_SRC_FILES})
+add_executable(drasilpp ${DRASILPP_SRC_FILES} ${DRASILPP_PLATFORM_SRC_FILES})
 
-target_include_directories(app3d PRIVATE ${CMAKE_SOURCE_DIR}/3rdparty/stb_image)
-target_include_directories(app3d
+target_include_directories(drasilpp
+                           PRIVATE ${CMAKE_SOURCE_DIR}/3rdparty/stb_image)
+target_include_directories(drasilpp
                            PRIVATE ${CMAKE_SOURCE_DIR}/3rdparty/tiny_obj_loader)
-target_link_libraries(app3d PRIVATE app3d-rel)
+target_link_libraries(drasilpp PRIVATE drasilpp-rel)
 
-if(APP3D_USE_PLATFORM STREQUAL "XCB")
-  target_link_libraries(app3d PRIVATE xcb)
+if(DRASILPP_USE_PLATFORM STREQUAL "XCB")
+  target_link_libraries(drasilpp PRIVATE xcb)
 endif()
 
-install(TARGETS app3d RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-                              COMPONENT binaries)
-install_win32_pdb(app3d)
+install(TARGETS drasilpp RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+                                 COMPONENT binaries)
+install_win32_pdb(drasilpp)
 
 install(
   DIRECTORY ${CMAKE_SOURCE_DIR}/data
@@ -122,4 +123,4 @@ install(
 # ##############################################################################
 # Auxiliary
 
-add_compile_defs_and_include_dirs_targets(app3d ${CMAKE_CURRENT_SOURCE_DIR})
+add_compile_defs_and_include_dirs_targets(drasilpp ${CMAKE_CURRENT_SOURCE_DIR})

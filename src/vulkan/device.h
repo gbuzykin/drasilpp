@@ -4,7 +4,7 @@
 #include "command_buffer.h"
 #include "dev_queue.h"
 
-namespace app3d::rel::vulkan {
+namespace drasilpp::rel::vulkan {
 
 class RenderingDriver;
 class PhysicalDevice;
@@ -102,4 +102,4 @@ class Device final : public util::ref_counter, public IDevice {
     bool createStagingBuffer(VkDeviceSize size, StagingBuffer& buffer);
 };
 
-}  // namespace app3d::rel::vulkan
+}  // namespace drasilpp::rel::vulkan

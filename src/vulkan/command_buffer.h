@@ -5,7 +5,7 @@
 #include "interfaces/i_rendering_driver.h"
 #include "util/range_helpers.h"
 
-namespace app3d::rel::vulkan {
+namespace drasilpp::rel::vulkan {
 
 class CommandBuffer {
  public:
@@ -90,4 +90,4 @@ class CommandBuffer {
     VkCommandBuffer command_buffer_{VK_NULL_HANDLE};
 };
 
-}  // namespace app3d::rel::vulkan
+}  // namespace drasilpp::rel::vulkan

@@ -2,7 +2,7 @@
 
 #include "d3d12_api.h"
 
-namespace app3d::rel::d3d12 {
+namespace drasilpp::rel::d3d12 {
 
 template<typename Ty>
 struct Wrapper;
@@ -31,4 +31,4 @@ struct Wrapper<D3D12_RESOURCE_BARRIER> {
     }
 };
 
-}  // namespace app3d::rel::d3d12
+}  // namespace drasilpp::rel::d3d12

@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace app3d {
+namespace drasilpp {
 
 struct Image {
     std::uint32_t width = 0;
@@ -16,4 +16,4 @@ struct Image {
 
 bool loadImageFromFile(const char* filename, Image& image, std::uint32_t num_requested_components = 0);
 
-}  // namespace app3d
+}  // namespace drasilpp

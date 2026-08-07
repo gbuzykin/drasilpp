@@ -8,7 +8,7 @@
 
 #include <array>
 
-namespace app3d::rel::d3d12 {
+namespace drasilpp::rel::d3d12 {
 
 class Device;
 class DescriptorSet;
@@ -107,4 +107,4 @@ class PipelineLayout : public util::ref_counter, public IPipelineLayout {
     uxs::inline_dynarray<Binding, 64> slot_bindings_;
 };
 
-}  // namespace app3d::rel::d3d12
+}  // namespace drasilpp::rel::d3d12

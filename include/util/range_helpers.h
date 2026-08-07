@@ -11,7 +11,7 @@
 
 // NOLINTBEGIN(readability-identifier-naming*)
 
-namespace app3d::util {
+namespace drasilpp::util {
 
 template<typename Range, typename Ty>
 concept is_contiguous_range = requires(Range r) {
@@ -50,6 +50,6 @@ inline auto as_byte_span(Range&& r) {
         std::size(r) * sizeof(Ty));
 }
 
-}  // namespace app3d::util
+}  // namespace drasilpp::util
 
 // NOLINTEND(readability-identifier-naming*)

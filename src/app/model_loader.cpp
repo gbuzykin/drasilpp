@@ -9,7 +9,7 @@
 #include <cstddef>
 #include <string>
 
-using namespace app3d;
+using namespace drasilpp;
 
 // Based on:
 // Lengyel, Eric. "Computing Tangent Space Basis Vectors for an Arbitrary Model".
@@ -63,7 +63,7 @@ void generateTangentSpaceVectors(Model& mesh) {
     }
 }
 
-bool app3d::loadModelFromObjFile(const char* filename, LoadModelFlags flags, Model& model) {
+bool drasilpp::loadModelFromObjFile(const char* filename, LoadModelFlags flags, Model& model) {
     tinyobj::attrib_t attribs;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;

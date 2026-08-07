@@ -2,7 +2,7 @@
 
 #include "interfaces/i_rendering_driver.h"
 
-namespace app3d::rel::d3d12 {
+namespace drasilpp::rel::d3d12 {
 
 class RenderingDriver;
 
@@ -26,4 +26,4 @@ class Surface final : public util::ref_counter, public ISurface {
     WindowDescriptor win_desc_;
 };
 
-}  // namespace app3d::rel::d3d12
+}  // namespace drasilpp::rel::d3d12

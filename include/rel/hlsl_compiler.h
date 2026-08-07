@@ -4,9 +4,9 @@
 
 #include <uxs/db/value.h>
 
-namespace app3d::rel {
+namespace drasilpp::rel {
 
-class APP3D_REL_EXPORT HlslCompiler {
+class DRASILPP_REL_EXPORT HlslCompiler {
  public:
     HlslCompiler();
     ~HlslCompiler();
@@ -19,4 +19,4 @@ class APP3D_REL_EXPORT HlslCompiler {
     std::unique_ptr<Implementation> impl_;
 };
 
-}  // namespace app3d::rel
+}  // namespace drasilpp::rel

@@ -4,7 +4,7 @@
 
 #include "interfaces/i_rendering_driver.h"
 
-namespace app3d::rel::d3d12 {
+namespace drasilpp::rel::d3d12 {
 
 class Device;
 
@@ -32,4 +32,4 @@ class Buffer : public util::ref_counter, public IBuffer {
     util::ref_ptr<D3D12MA::Allocation> allocation_;
 };
 
-}  // namespace app3d::rel::d3d12
+}  // namespace drasilpp::rel::d3d12

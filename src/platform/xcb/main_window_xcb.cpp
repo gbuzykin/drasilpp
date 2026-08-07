@@ -11,7 +11,7 @@
 #include <cstring>
 #include <vector>
 
-using namespace app3d;
+using namespace drasilpp;
 
 struct WindowDescImpl {
     xcb_connection_t* connection;

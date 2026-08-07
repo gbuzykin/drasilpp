@@ -9,22 +9,22 @@
 #include <uxs/db/value.h>
 
 #if defined(WIN32)
-#    define APP3D_ENTRY_EXPORT extern "C" __declspec(dllexport)
+#    define DRASILPP_ENTRY_EXPORT extern "C" __declspec(dllexport)
 #elif defined(__linux__)
-#    define APP3D_ENTRY_EXPORT extern "C" __attribute__((visibility("default")))
+#    define DRASILPP_ENTRY_EXPORT extern "C" __attribute__((visibility("default")))
 #endif
 
-#define APP3D_REGISTER_RENDERING_DRIVER(name, driver_class) \
-    constexpr app3d::rel::DriverDesc g_rendering_driver_descriptor{ \
-        name, []() -> app3d::util::ref_ptr<app3d::rel::IRenderingDriver> { \
-            return app3d::util::not_null{::new driver_class()}; \
+#define DRASILPP_REGISTER_RENDERING_DRIVER(name, driver_class) \
+    constexpr drasilpp::rel::DriverDesc g_rendering_driver_descriptor{ \
+        name, []() -> drasilpp::util::ref_ptr<drasilpp::rel::IRenderingDriver> { \
+            return drasilpp::util::not_null{::new driver_class()}; \
         }}; \
-    APP3D_ENTRY_EXPORT const app3d::rel::DriverDesc* app3dGetRenderingDriverDescriptor() { \
+    DRASILPP_ENTRY_EXPORT const drasilpp::rel::DriverDesc* drasilppGetRenderingDriverDescriptor() { \
         return &g_rendering_driver_descriptor; \
     } \
     static_assert(true)
 
-namespace app3d::rel {
+namespace drasilpp::rel {
 
 enum class RenderTargetResult {
     SUCCESS = 0,
@@ -151,4 +151,4 @@ struct DriverDesc {
 
 using GetDriverDescriptorFuncPtr = const DriverDesc* (*)();
 
-}  // namespace app3d::rel
+}  // namespace drasilpp::rel

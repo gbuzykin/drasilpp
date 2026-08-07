@@ -4,7 +4,7 @@
 
 #include "interfaces/i_rendering_driver.h"
 
-namespace app3d::rel::vulkan {
+namespace drasilpp::rel::vulkan {
 
 class RenderTarget;
 class CommandBuffer;
@@ -28,4 +28,4 @@ class FrameImageProvider : public util::ref_counter {
     virtual void removeRenderTarget(RenderTarget* render_target) = 0;
 };
 
-}  // namespace app3d::rel::vulkan
+}  // namespace drasilpp::rel::vulkan

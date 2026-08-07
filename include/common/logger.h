@@ -7,14 +7,14 @@
 
 #include <string_view>
 
-namespace app3d {
+namespace drasilpp {
 
 enum class LogLevel : unsigned { PR_ERROR = 0, PR_WARNING, PR_INFO, PR_DEBUG };
 
-APP3D_COMMON_EXPORT void setLogLevel(LogLevel level);
+DRASILPP_COMMON_EXPORT void setLogLevel(LogLevel level);
 
 namespace detail {
-APP3D_COMMON_EXPORT void vprint(LogLevel level, std::string_view fmt, uxs::format_args args);
+DRASILPP_COMMON_EXPORT void vprint(LogLevel level, std::string_view fmt, uxs::format_args args);
 }
 
 template<typename... Args>
@@ -40,4 +40,4 @@ template<unsigned Level = 0, typename... Dummy>
 void logDebug(Dummy&&...) {}
 #endif
 
-}  // namespace app3d
+}  // namespace drasilpp

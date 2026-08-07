@@ -6,7 +6,7 @@
 
 #include <span>
 
-namespace app3d::rel::d3d12 {
+namespace drasilpp::rel::d3d12 {
 
 class Device;
 
@@ -40,4 +40,4 @@ class DevQueue {
     uxs::inline_dynarray<util::ref_ptr<ID3D12CommandAllocator>, 8> allocators_;
 };
 
-}  // namespace app3d::rel::d3d12
+}  // namespace drasilpp::rel::d3d12

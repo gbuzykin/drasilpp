@@ -10,9 +10,9 @@
 
 #include "rel/tables.h"
 
-using namespace app3d;
-using namespace app3d::rel;
-using namespace app3d::rel::d3d12;
+using namespace drasilpp;
+using namespace drasilpp::rel;
+using namespace drasilpp::rel::d3d12;
 
 // --------------------------------------------------------
 // PipelineLayout class implementation

@@ -5,9 +5,9 @@
 #include <cstddef>
 #include <memory>
 
-using namespace app3d;
+using namespace drasilpp;
 
-bool app3d::loadImageFromFile(const char* filename, Image& image, std::uint32_t num_requested_components) {
+bool drasilpp::loadImageFromFile(const char* filename, Image& image, std::uint32_t num_requested_components) {
     int width = 0;
     int height = 0;
     int num_components = 0;

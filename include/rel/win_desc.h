@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <type_traits>
 
-namespace app3d::rel {
+namespace drasilpp::rel {
 
 enum class PlatformType {
     PLATFORM_WIN32 = 0,
@@ -19,4 +19,4 @@ struct WindowDescriptor {
     } handle;
 };
 
-}  // namespace app3d::rel
+}  // namespace drasilpp::rel

@@ -5,7 +5,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace app3d::rel {
+namespace drasilpp::rel {
 
 struct Vec2i {
     std::int32_t x, y;
@@ -59,4 +59,4 @@ struct UpdateTextureDesc {
     Extent3u image_extent;
 };
 
-}  // namespace app3d::rel
+}  // namespace drasilpp::rel

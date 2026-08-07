@@ -10,7 +10,7 @@
 
 #include <vector>
 
-namespace app3d::rel::vulkan {
+namespace drasilpp::rel::vulkan {
 
 class Device;
 class CommandBuffer;
@@ -53,4 +53,4 @@ class DevQueue {
     uxs::inline_dynarray<CommandPool, 8> cmd_pools_;
 };
 
-}  // namespace app3d::rel::vulkan
+}  // namespace drasilpp::rel::vulkan

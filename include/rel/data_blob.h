@@ -8,9 +8,9 @@
 #include <span>
 #include <string_view>
 
-namespace app3d::rel {
+namespace drasilpp::rel {
 
-class APP3D_REL_EXPORT DataBlob {
+class DRASILPP_REL_EXPORT DataBlob {
  public:
     DataBlob() noexcept = default;
     explicit DataBlob(std::size_t size)
@@ -31,7 +31,7 @@ class APP3D_REL_EXPORT DataBlob {
     }
 
     std::string_view getTextView() const noexcept {
-        return std::string_view{reinterpret_cast<const char*>(getData()), getSize()};
+        return std::string_view(reinterpret_cast<const char*>(getData()), getSize());
     }
 
     std::span<char> getTextBuffer() noexcept { return std::span{reinterpret_cast<char*>(getData()), getSize()}; }
@@ -45,4 +45,4 @@ class APP3D_REL_EXPORT DataBlob {
     std::unique_ptr<std::max_align_t[]> data_;
 };
 
-}  // namespace app3d::rel
+}  // namespace drasilpp::rel

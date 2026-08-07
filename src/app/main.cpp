@@ -18,7 +18,7 @@
 #include <exception>
 #include <thread>
 
-using namespace app3d;
+using namespace drasilpp;
 
 class Timer {
  public:
@@ -63,9 +63,9 @@ struct CB0 {
     rel::Mat3f mv;
 };
 
-class App3DMainWindow final : public MainWindow {
+class AppMainWindow final : public MainWindow {
  public:
-    ~App3DMainWindow() {
+    ~AppMainWindow() {
         if (device_) { device_->waitDevice(); }
     }
 
@@ -204,15 +204,15 @@ class App3DMainWindow final : public MainWindow {
 
 #define JSON(...) uxs::db::json::read_from_string(#__VA_ARGS__)
 
-int App3DMainWindow::init(int argc, char** argv) {
-    void* driver_library = loadDynamicLibrary(".", "app3d-rel-vulkan");
+int AppMainWindow::init(int argc, char** argv) {
+    void* driver_library = loadDynamicLibrary(".", "drasilpp-rel-vulkan");
     if (!driver_library) { return -1; }
 
     auto* entry = (rel::GetDriverDescriptorFuncPtr)getDynamicLibraryEntry(driver_library,
-                                                                          "app3dGetRenderingDriverDescriptor");
+                                                                          "drasilppGetRenderingDriverDescriptor");
     if (!entry) { return -1; }
 
-    const auto app_info = JSON({"name" : "App3D", "version" : [ 1, 0, 0 ]});
+    const auto app_info = JSON({"name" : "DrasilPP", "version" : [ 1, 0, 0 ]});
 
     if (!(driver_ = entry()->create_func()) || !driver_->init(app_info)) { return -1; }
 
@@ -255,7 +255,7 @@ int App3DMainWindow::init(int argc, char** argv) {
     return 0;
 }
 
-util::ref_ptr<rel::IShaderModule> App3DMainWindow::compileShaderModule(const char* filename, const char* target) {
+util::ref_ptr<rel::IShaderModule> AppMainWindow::compileShaderModule(const char* filename, const char* target) {
     if (uxs::filebuf ifile(filename, "r"); ifile) {
         rel::DataBlob shader_text(ifile.seek(0, uxs::seekdir::end));
         ifile.seek(0);
@@ -282,7 +282,7 @@ util::ref_ptr<rel::IShaderModule> App3DMainWindow::compileShaderModule(const cha
     return nullptr;
 }
 
-bool App3DMainWindow::initScene() {
+bool AppMainWindow::initScene() {
     vertex_shader_module_ = compileShaderModule("data/shaders/transform/vert.hlsl", "vs_6_0");
     if (!vertex_shader_module_) { return false; }
 
@@ -372,7 +372,7 @@ bool App3DMainWindow::initScene() {
     return true;
 }
 
-void App3DMainWindow::updateMatrices(Padded<CB0>* cb0) {
+void AppMainWindow::updateMatrices(Padded<CB0>* cb0) {
     const auto r = rel::Mat4f::rotate(5.f * timer_.getCurrent(), {0.f, 1.f, 0.f});
     const auto m1 = r * rel::Mat4f::translate({-1.f, 0.f, 0.f});
     const auto m2 = r * rel::Mat4f::translate({1.f, 0.f, 0.f});
@@ -387,7 +387,7 @@ void App3DMainWindow::updateMatrices(Padded<CB0>* cb0) {
     cb0[1].mvp = mv2 * p;
 }
 
-bool App3DMainWindow::renderScene() {
+bool AppMainWindow::renderScene() {
     auto& frame = frame_data_[n_frame_];
 
     const auto result = render_target_->beginRenderTarget({0.1f, 0.2f, 0.3f, 1.0f}, 1.0f, 0, *pipeline_);
@@ -419,7 +419,7 @@ bool App3DMainWindow::renderScene() {
 
 int main(int argc, char** argv) {
     try {
-        App3DMainWindow win;
+        AppMainWindow win;
 
         setLogLevel(LogLevel::PR_DEBUG);
         int init_result = win.init(argc, argv);

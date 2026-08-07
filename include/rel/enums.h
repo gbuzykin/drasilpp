@@ -2,7 +2,7 @@
 
 #include <uxs/utility.h>
 
-namespace app3d::rel {
+namespace drasilpp::rel {
 
 enum class Format {
     R32_FLOAT = 0,
@@ -88,4 +88,4 @@ enum class TextureFlags {
 };
 UXS_IMPLEMENT_BITWISE_OPS_FOR_ENUM(TextureFlags);
 
-}  // namespace app3d::rel
+}  // namespace drasilpp::rel

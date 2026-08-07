@@ -7,7 +7,7 @@
 
 #include <vector>
 
-namespace app3d::rel::vulkan {
+namespace drasilpp::rel::vulkan {
 
 class PhysicalDevice;
 class Surface;
@@ -108,4 +108,4 @@ class PhysicalDevice {
     std::vector<VkQueueFamilyProperties> queue_families_;
 };
 
-}  // namespace app3d::rel::vulkan
+}  // namespace drasilpp::rel::vulkan

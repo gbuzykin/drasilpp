@@ -12,9 +12,9 @@
 #    include <dlfcn.h>
 #endif
 
-using namespace app3d;
+using namespace drasilpp;
 
-void* app3d::loadDynamicLibrary(const std::filesystem::path& library_dir, std::string_view library_name) {
+void* drasilpp::loadDynamicLibrary(const std::filesystem::path& library_dir, std::string_view library_name) {
     std::filesystem::path library_path(uxs::utf_native_path_adapter{}(library_name));
 
 #if defined(WIN32)
@@ -68,7 +68,7 @@ void* app3d::loadDynamicLibrary(const std::filesystem::path& library_dir, std::s
     return library;
 }
 
-void app3d::freeDynamicLibrary(void* library) {
+void drasilpp::freeDynamicLibrary(void* library) {
     if (!library) { return; }
 #if defined(WIN32)
     ::FreeLibrary(static_cast<HMODULE>(library));
@@ -77,7 +77,7 @@ void app3d::freeDynamicLibrary(void* library) {
 #endif
 }
 
-void* app3d::getDynamicLibraryEntry(void* library, const char* entry_name) {
+void* drasilpp::getDynamicLibraryEntry(void* library, const char* entry_name) {
 #if defined(WIN32)
     void* entry = ::GetProcAddress(static_cast<HMODULE>(library), entry_name);
 #elif defined(__linux__)

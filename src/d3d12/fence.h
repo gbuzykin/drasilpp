@@ -4,7 +4,7 @@
 
 #include "util/ref_ptr.h"
 
-namespace app3d::rel::d3d12 {
+namespace drasilpp::rel::d3d12 {
 
 class Device;
 class DevQueue;
@@ -41,4 +41,4 @@ class Fence {
     UINT64 current_fence_ = 0;
 };
 
-}  // namespace app3d::rel::d3d12
+}  // namespace drasilpp::rel::d3d12

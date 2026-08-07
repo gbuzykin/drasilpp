@@ -15,7 +15,7 @@
 #    undef max
 #endif
 
-namespace app3d::rel::vulkan {
+namespace drasilpp::rel::vulkan {
 
 struct InstanceVkFuncTable {
 #define EXPORTED_VK_FUNCTION(name)                                        PFN_##name name;
@@ -38,4 +38,4 @@ struct DeviceVkFuncTable {
 #include "vulkan_function_list.inl"
 };
 
-}  // namespace app3d::rel::vulkan
+}  // namespace drasilpp::rel::vulkan

@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace app3d {
+namespace drasilpp {
 
 enum class LoadModelFlags {
     LOAD_NORMALS = 1,
@@ -28,4 +28,4 @@ struct Model {
 
 bool loadModelFromObjFile(const char* filename, LoadModelFlags flags, Model& model);
 
-}  // namespace app3d
+}  // namespace drasilpp

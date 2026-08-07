@@ -7,7 +7,7 @@
 
 #include <vector>
 
-namespace app3d::rel::d3d12 {
+namespace drasilpp::rel::d3d12 {
 
 class PhysicalDevice {
  public:
@@ -53,4 +53,4 @@ class RenderingDriver final : public util::ref_counter, public IRenderingDriver 
     bool loadPhysicalDeviceList();
 };
 
-}  // namespace app3d::rel::d3d12
+}  // namespace drasilpp::rel::d3d12

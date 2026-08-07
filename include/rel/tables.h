@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <string_view>
 
-namespace app3d::rel {
+namespace drasilpp::rel {
 
 constexpr std::array TBL_FORMAT_SIZE{
     // Format::
@@ -45,9 +45,9 @@ constexpr std::array TBL_DESC_BINDING_TYPE{
     BindingType::UNORDERED_ACCESS,  // RW_STRUCTURED_BUFFER_DYNAMIC,
 };
 
-APP3D_REL_EXPORT Format parseFormat(std::string_view fmt);
-APP3D_REL_EXPORT ShaderStage parseShaderStage(std::string_view stage);
-APP3D_REL_EXPORT PrimitiveTopology parsePrimitiveTopology(std::string_view topology);
-APP3D_REL_EXPORT DescriptorType parseDescriptorType(std::string_view type);
+DRASILPP_REL_EXPORT Format parseFormat(std::string_view fmt);
+DRASILPP_REL_EXPORT ShaderStage parseShaderStage(std::string_view stage);
+DRASILPP_REL_EXPORT PrimitiveTopology parsePrimitiveTopology(std::string_view topology);
+DRASILPP_REL_EXPORT DescriptorType parseDescriptorType(std::string_view type);
 
-}  // namespace app3d::rel
+}  // namespace drasilpp::rel

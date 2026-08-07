@@ -6,9 +6,9 @@
 
 #include <uxs/string_util.h>
 
-using namespace app3d;
-using namespace app3d::rel;
-using namespace app3d::rel::d3d12;
+using namespace drasilpp;
+using namespace drasilpp::rel;
+using namespace drasilpp::rel::d3d12;
 
 // --------------------------------------------------------
 // RenderingDriver class implementation
@@ -98,4 +98,4 @@ bool PhysicalDevice::loadDescription() {
     return true;
 }
 
-APP3D_REGISTER_RENDERING_DRIVER("D3D12", RenderingDriver);
+DRASILPP_REGISTER_RENDERING_DRIVER("D3D12", RenderingDriver);

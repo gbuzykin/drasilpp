@@ -2,7 +2,7 @@
 
 #include "frame_image_provider.h"
 
-namespace app3d::rel::vulkan {
+namespace drasilpp::rel::vulkan {
 
 class Device;
 
@@ -50,4 +50,4 @@ class Texture final : public FrameImageProvider, public ITexture {
     VkImageView image_view_{VK_NULL_HANDLE};
 };
 
-}  // namespace app3d::rel::vulkan
+}  // namespace drasilpp::rel::vulkan

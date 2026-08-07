@@ -6,7 +6,7 @@
 
 // NOLINTBEGIN(readability-identifier-naming*)
 
-namespace app3d::util {
+namespace drasilpp::util {
 
 template<typename T>
 class not_null {
@@ -59,11 +59,11 @@ constexpr auto operator<=>(const not_null<T>& lhs, const not_null<U>& rhs) noexc
     return lhs.get() <=> rhs.get();
 }
 
-}  // namespace app3d::util
+}  // namespace drasilpp::util
 
 namespace std {
 template<typename T>
-void swap(app3d::util::not_null<T>& p1, app3d::util::not_null<T>& p2) noexcept(std::is_nothrow_swappable_v<T>) {
+void swap(drasilpp::util::not_null<T>& p1, drasilpp::util::not_null<T>& p2) noexcept(std::is_nothrow_swappable_v<T>) {
     p1.swap(p2);
 }
 

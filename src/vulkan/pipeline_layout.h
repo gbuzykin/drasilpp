@@ -8,7 +8,7 @@
 
 #include <array>
 
-namespace app3d::rel::vulkan {
+namespace drasilpp::rel::vulkan {
 
 class Device;
 
@@ -66,4 +66,4 @@ class PipelineLayout : public util::ref_counter, public IPipelineLayout {
     bool createDescriptorPool(std::uint32_t total_max_sets, std::span<const VkDescriptorPoolSize> desc_counts);
 };
 
-}  // namespace app3d::rel::vulkan
+}  // namespace drasilpp::rel::vulkan

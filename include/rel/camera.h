@@ -2,7 +2,7 @@
 
 #include "math.h"
 
-namespace app3d::rel {
+namespace drasilpp::rel {
 
 struct Camera {
     Vec3f eye{0.f, 0.f, 4.f};
@@ -72,4 +72,4 @@ class OrbitCameraManipulator {
     Vec3f up0_{};
 };
 
-}  // namespace app3d::rel
+}  // namespace drasilpp::rel

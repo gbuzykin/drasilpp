@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <span>
 
-namespace app3d::rel::vulkan {
+namespace drasilpp::rel::vulkan {
 
 template<typename Ty>
 struct Wrapper;
@@ -89,4 +89,4 @@ struct Wrapper<VkSubpassDescription> {
     }
 };
 
-}  // namespace app3d::rel::vulkan
+}  // namespace drasilpp::rel::vulkan

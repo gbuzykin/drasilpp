@@ -17,8 +17,8 @@
 #include <dxc/dxcapi.h>
 // clang-format on
 
-using namespace app3d;
-using namespace app3d::rel;
+using namespace drasilpp;
+using namespace drasilpp::rel;
 
 // --------------------------------------------------------
 // HlslCompiler::Implementation class implementation
@@ -172,9 +172,9 @@ uxs::db::basic_value<wchar_t> uft8ToWideUtfDbValue(const uxs::db::value& v) {
     return v.visit([](auto x) -> uxs::db::basic_value<wchar_t> {
         uxs::db::basic_value<wchar_t> result;
         if constexpr (std::is_same_v<decltype(x), decltype(v.as_string_view())>) {
-            return std::wstring_view{uxs::wide_string_adapter{}(x)};
+            return std::wstring_view(uxs::wide_string_adapter{}(x));
         } else if constexpr (std::is_same_v<decltype(x), decltype(v.as_array())>) {
-            result.reserve(x.size());
+            result.reserve(uxs::db::array_tag, x.size());
             for (const auto& el : x) { result.emplace_back(uft8ToWideUtfDbValue(el)); }
         } else if constexpr (std::is_same_v<decltype(x), decltype(v.as_record())>) {
             result.reserve(uxs::db::record_tag, x.size());

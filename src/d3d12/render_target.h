@@ -7,7 +7,7 @@
 
 #include <uxs/dynarray.h>
 
-namespace app3d::rel::d3d12 {
+namespace drasilpp::rel::d3d12 {
 
 class Device;
 class FrameImageProvider;
@@ -71,4 +71,4 @@ class RenderTarget final : public util::ref_counter, public IRenderTarget {
     uxs::inline_dynarray<FrameRenderKit, 3> frame_render_kits_;
 };
 
-}  // namespace app3d::rel::d3d12
+}  // namespace drasilpp::rel::d3d12

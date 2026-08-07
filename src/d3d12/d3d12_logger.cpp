@@ -39,7 +39,7 @@ const std::unordered_map<HRESULT, std::string_view> g_result_text{
 };
 }
 
-std::string_view app3d::rel::d3d12::getHResultText(HRESULT result) {
+std::string_view drasilpp::rel::d3d12::getHResultText(HRESULT result) {
     auto it = g_result_text.find(result);
     return it != g_result_text.end() ? it->second : "";
 }

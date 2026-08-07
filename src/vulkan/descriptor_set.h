@@ -2,7 +2,7 @@
 
 #include "pipeline_layout.h"
 
-namespace app3d::rel::vulkan {
+namespace drasilpp::rel::vulkan {
 
 class Device;
 
@@ -37,4 +37,4 @@ class DescriptorSet final : public util::ref_counter, public IDescriptorSet {
     void writeBufferDescriptorSet(PipelineLayout::Binding binding, std::span<const VkDescriptorBufferInfo> buffer_infos);
 };
 
-}  // namespace app3d::rel::vulkan
+}  // namespace drasilpp::rel::vulkan

@@ -7,7 +7,7 @@
 
 #define LOG_VK "Vulkan: "
 
-namespace app3d::rel::vulkan {
+namespace drasilpp::rel::vulkan {
 std::string_view getVkResultText(VkResult result);
 }
 
@@ -21,7 +21,7 @@ struct uxs::formatter<VkResult, CharT> {
     }
     template<typename FmtCtx>
     void format(FmtCtx& ctx, VkResult val) const {
-        const auto text = app3d::rel::vulkan::getVkResultText(val);
+        const auto text = drasilpp::rel::vulkan::getVkResultText(val);
         if (!text.empty()) {
             ctx.out() += text;
         } else {

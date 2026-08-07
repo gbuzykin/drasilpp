@@ -11,7 +11,7 @@ namespace {
 uxs::iobuf& g_out = uxs::stdbuf::out();
 uxs::iobuf& g_err = uxs::stdbuf::err();
 std::mutex g_mtx;
-app3d::LogLevel g_current_print_level{app3d::LogLevel::PR_INFO};
+drasilpp::LogLevel g_current_print_level{drasilpp::LogLevel::PR_INFO};
 
 std::chrono::seconds currentTimeZoneOffset() {
     using namespace std::chrono;
@@ -39,9 +39,9 @@ std::chrono::seconds currentTimeZoneOffset() {
 }
 }  // namespace
 
-void app3d::setLogLevel(LogLevel level) { g_current_print_level = level; }
+void drasilpp::setLogLevel(LogLevel level) { g_current_print_level = level; }
 
-void app3d::detail::vprint(LogLevel level, std::string_view fmt, uxs::format_args args) {
+void drasilpp::detail::vprint(LogLevel level, std::string_view fmt, uxs::format_args args) {
     if (level > g_current_print_level) { return; }
 
     std::string_view msg_type;

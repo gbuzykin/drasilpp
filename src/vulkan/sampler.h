@@ -4,7 +4,7 @@
 
 #include "interfaces/i_rendering_driver.h"
 
-namespace app3d::rel::vulkan {
+namespace drasilpp::rel::vulkan {
 
 class Device;
 
@@ -26,4 +26,4 @@ class Sampler final : public util::ref_counter, public ISampler {
     VkSampler sampler_{VK_NULL_HANDLE};
 };
 
-}  // namespace app3d::rel::vulkan
+}  // namespace drasilpp::rel::vulkan

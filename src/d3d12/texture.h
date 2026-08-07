@@ -2,7 +2,7 @@
 
 #include "frame_image_provider.h"
 
-namespace app3d::rel::d3d12 {
+namespace drasilpp::rel::d3d12 {
 
 class Device;
 
@@ -44,4 +44,4 @@ class Texture final : public FrameImageProvider, public ITexture {
     D3D12_SHADER_RESOURCE_VIEW_DESC view_desc_;
 };
 
-}  // namespace app3d::rel::d3d12
+}  // namespace drasilpp::rel::d3d12

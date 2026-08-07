@@ -4,7 +4,7 @@
 
 #include "interfaces/i_rendering_driver.h"
 
-namespace app3d::rel::d3d12 {
+namespace drasilpp::rel::d3d12 {
 
 class RenderingDriver;
 class PhysicalDevice;
@@ -81,4 +81,4 @@ class Device final : public util::ref_counter, public IDevice {
     bool createStagingBuffer(UINT64 size, StagingBuffer& buffer);
 };
 
-}  // namespace app3d::rel::d3d12
+}  // namespace drasilpp::rel::d3d12

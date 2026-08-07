@@ -13,7 +13,7 @@
 #    undef max
 #endif
 
-namespace app3d::rel::d3d12 {
+namespace drasilpp::rel::d3d12 {
 
 inline D3D12_CPU_DESCRIPTOR_HANDLE& operator+=(D3D12_CPU_DESCRIPTOR_HANDLE& handle, std::uint32_t offset) {
     handle.ptr += offset;
@@ -35,4 +35,4 @@ inline D3D12_GPU_DESCRIPTOR_HANDLE operator+(D3D12_GPU_DESCRIPTOR_HANDLE handle,
     return handle;
 }
 
-}  // namespace app3d::rel::d3d12
+}  // namespace drasilpp::rel::d3d12

@@ -4,7 +4,7 @@
 
 #include <uxs/dynarray.h>
 
-namespace app3d::rel::d3d12 {
+namespace drasilpp::rel::d3d12 {
 
 class Device;
 class Surface;
@@ -49,4 +49,4 @@ class SwapChain final : public FrameImageProvider, public ISwapChain {
     bool recreateSwapChainResources(const uxs::db::value& opts);
 };
 
-}  // namespace app3d::rel::d3d12
+}  // namespace drasilpp::rel::d3d12

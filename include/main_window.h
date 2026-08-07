@@ -4,7 +4,7 @@
 
 #include <memory>
 
-namespace app3d {
+namespace drasilpp {
 
 // clang-format off
 enum class KeyCode : std::uint8_t {
@@ -61,4 +61,4 @@ class MainWindow {
     std::unique_ptr<Implementation> impl_;
 };
 
-}  // namespace app3d
+}  // namespace drasilpp

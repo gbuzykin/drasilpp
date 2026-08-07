@@ -4,7 +4,7 @@
 
 #include "interfaces/i_rendering_driver.h"
 
-namespace app3d::rel::d3d12 {
+namespace drasilpp::rel::d3d12 {
 
 class Device;
 
@@ -29,4 +29,4 @@ class ShaderModule final : public util::ref_counter, public IShaderModule {
     DataBlob bytecode_;
 };
 
-}  // namespace app3d::rel::d3d12
+}  // namespace drasilpp::rel::d3d12

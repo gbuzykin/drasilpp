@@ -19,7 +19,7 @@
 #    undef max
 #endif
 
-using namespace app3d;
+using namespace drasilpp;
 
 struct WindowDescImpl {
     HINSTANCE hinstance;
@@ -85,12 +85,12 @@ MainWindow::Implementation::Implementation(MainWindow& main_window) : main_windo
 
 MainWindow::Implementation::~Implementation() {
     if (hwnd_) { ::DestroyWindow(hwnd_); }
-    if (hinstance_) { ::UnregisterClassW(L"App3D Window Class", hinstance_); }
+    if (hinstance_) { ::UnregisterClassW(L" Window Class", hinstance_); }
 }
 
 bool MainWindow::Implementation::createWindow(const char* title, std::uint32_t width, std::uint32_t height) {
     HINSTANCE hinstance = ::GetModuleHandleW(NULL);
-    const wchar_t* window_class_name = L"App3D Window Class";
+    const wchar_t* window_class_name = L"DrasilPP Window Class";
     WNDCLASSEXW window_class = {
         .cbSize = sizeof(WNDCLASSEX),
         .style = CS_HREDRAW | CS_VREDRAW,

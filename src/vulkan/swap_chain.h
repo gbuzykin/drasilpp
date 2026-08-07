@@ -5,7 +5,7 @@
 
 #include <uxs/dynarray.h>
 
-namespace app3d::rel::vulkan {
+namespace drasilpp::rel::vulkan {
 
 class Device;
 class Surface;
@@ -73,4 +73,4 @@ class SwapChain final : public FrameImageProvider, public ISwapChain {
     void destroyImageViews();
 };
 
-}  // namespace app3d::rel::vulkan
+}  // namespace drasilpp::rel::vulkan

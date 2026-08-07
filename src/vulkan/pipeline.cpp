@@ -9,9 +9,9 @@
 
 #include "rel/tables.h"
 
-using namespace app3d;
-using namespace app3d::rel;
-using namespace app3d::rel::vulkan;
+using namespace drasilpp;
+using namespace drasilpp::rel;
+using namespace drasilpp::rel::vulkan;
 
 // --------------------------------------------------------
 // Pipeline class implementation

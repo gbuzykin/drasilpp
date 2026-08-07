@@ -5,7 +5,7 @@
 
 // NOLINTBEGIN(readability-identifier-naming*)
 
-namespace app3d::util {
+namespace drasilpp::util {
 
 class ref_counter {
  public:
@@ -24,6 +24,6 @@ class ref_counter {
     std::atomic<std::uint64_t> ref_count_{0};
 };
 
-}  // namespace app3d::util
+}  // namespace drasilpp::util
 
 // NOLINTEND(readability-identifier-naming*)

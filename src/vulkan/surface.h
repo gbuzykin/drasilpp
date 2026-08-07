@@ -2,7 +2,7 @@
 
 #include "dev_queue.h"
 
-namespace app3d::rel::vulkan {
+namespace drasilpp::rel::vulkan {
 
 class RenderingDriver;
 class PhysicalDevice;
@@ -45,4 +45,4 @@ class Surface final : public util::ref_counter, public ISurface {
     DevQueue present_queue_;
 };
 
-}  // namespace app3d::rel::vulkan
+}  // namespace drasilpp::rel::vulkan

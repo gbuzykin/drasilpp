@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace app3d::rel {
+namespace drasilpp::rel {
 
 struct Vec2f {
     float x, y;
@@ -121,4 +121,4 @@ constexpr Vec3f operator*(const Vec3f& lhs, const Mat4f& rhs) {
     };
 }
 
-}  // namespace app3d::rel
+}  // namespace drasilpp::rel

@@ -6,9 +6,9 @@
 
 #include "common/dynamic_library.h"
 
-using namespace app3d;
-using namespace app3d::rel;
-using namespace app3d::rel::vulkan;
+using namespace drasilpp;
+using namespace drasilpp::rel;
+using namespace drasilpp::rel::vulkan;
 
 // --------------------------------------------------------
 // RenderingDriver class implementation
@@ -161,7 +161,7 @@ bool RenderingDriver::createInstance(const uxs::db::value& app_info) {
         .applicationVersion = VK_MAKE_VERSION(version.value<std::uint32_t>("major"),
                                               version.value<std::uint32_t>("minor"),
                                               version.value<std::uint32_t>("patch")),
-        .pEngineName = "App3D Vulkan Rendering Driver",
+        .pEngineName = "DrasilPP Vulkan Rendering Driver",
         .engineVersion = VK_MAKE_VERSION(1, 0, 0),
         .apiVersion = VK_API_VERSION_1_2,
     };
@@ -308,4 +308,4 @@ bool PhysicalDevice::loadFeaturesAndProperties() {
     return true;
 }
 
-APP3D_REGISTER_RENDERING_DRIVER("Vulkan", RenderingDriver);
+DRASILPP_REGISTER_RENDERING_DRIVER("Vulkan", RenderingDriver);

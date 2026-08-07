@@ -4,7 +4,7 @@
 
 #include "interfaces/i_rendering_driver.h"
 
-namespace app3d::rel::vulkan {
+namespace drasilpp::rel::vulkan {
 
 class Device;
 
@@ -34,4 +34,4 @@ class Buffer : public util::ref_counter, public IBuffer {
     VmaAllocation allocation_{VK_NULL_HANDLE};
 };
 
-}  // namespace app3d::rel::vulkan
+}  // namespace drasilpp::rel::vulkan

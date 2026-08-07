@@ -14,15 +14,15 @@
 
 #define LOG_D3D12 "D3D12: "
 
-namespace app3d::rel::d3d12 {
+namespace drasilpp::rel::d3d12 {
 struct D3D12Result {
     HRESULT result;
 };
 std::string_view getHResultText(HRESULT result);
-}  // namespace app3d::rel::d3d12
+}  // namespace drasilpp::rel::d3d12
 
 template<typename CharT>
-struct uxs::formatter<app3d::rel::d3d12::D3D12Result, CharT> {
+struct uxs::formatter<drasilpp::rel::d3d12::D3D12Result, CharT> {
  public:
     template<typename ParseCtx>
     constexpr typename ParseCtx::iterator parse(ParseCtx& ctx) {
@@ -30,8 +30,8 @@ struct uxs::formatter<app3d::rel::d3d12::D3D12Result, CharT> {
         return it == ctx.end() || *it != ':' ? it : it + 1;
     }
     template<typename FmtCtx>
-    void format(FmtCtx& ctx, app3d::rel::d3d12::D3D12Result val) const {
-        const auto text = app3d::rel::d3d12::getHResultText(val.result);
+    void format(FmtCtx& ctx, drasilpp::rel::d3d12::D3D12Result val) const {
+        const auto text = drasilpp::rel::d3d12::getHResultText(val.result);
         if (!text.empty()) {
             ctx.out() += text;
         } else {

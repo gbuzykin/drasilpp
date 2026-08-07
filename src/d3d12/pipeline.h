@@ -6,7 +6,7 @@
 
 #include <uxs/dynarray.h>
 
-namespace app3d::rel::d3d12 {
+namespace drasilpp::rel::d3d12 {
 
 class Device;
 class RenderTarget;
@@ -37,4 +37,4 @@ class Pipeline final : public util::ref_counter, public IPipeline {
     uxs::inline_dynarray<std::uint32_t> vertex_strides_;
 };
 
-}  // namespace app3d::rel::d3d12
+}  // namespace drasilpp::rel::d3d12

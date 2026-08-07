@@ -6,7 +6,7 @@
 
 // NOLINTBEGIN(readability-identifier-naming*)
 
-namespace app3d::util {
+namespace drasilpp::util {
 
 template<typename T>
 struct ref_inc;
@@ -184,11 +184,11 @@ struct ref_dec<T> {
     void operator()(T& p) const { p.Release(); }
 };
 
-}  // namespace app3d::util
+}  // namespace drasilpp::util
 
 namespace std {
 template<typename T>
-void swap(app3d::util::ref_ptr<T>& p1, app3d::util::ref_ptr<T>& p2) noexcept {
+void swap(drasilpp::util::ref_ptr<T>& p1, drasilpp::util::ref_ptr<T>& p2) noexcept {
     p1.swap(p2);
 }
 }  // namespace std
