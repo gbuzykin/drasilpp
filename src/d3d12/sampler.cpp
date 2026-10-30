@@ -10,7 +10,7 @@ using namespace drasilpp::rel::d3d12;
 // --------------------------------------------------------
 // Sampler class implementation
 
-Sampler::Sampler(Device& device) : device_(util::not_null{&device}) {}
+Sampler::Sampler(std::shared_ptr<Device> device) : device_(std::move(device)) {}
 
 Sampler::~Sampler() {}
 

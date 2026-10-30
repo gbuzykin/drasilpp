@@ -4,9 +4,9 @@
 
 namespace drasilpp::rel::d3d12 {
 
-class DescriptorSet final : public util::ref_counter, public IDescriptorSet {
+class DescriptorSet final : public IDescriptorSet {
  public:
-    DescriptorSet(Device& device, PipelineLayout& pipeline_layout);
+    DescriptorSet(std::shared_ptr<Device> device, std::shared_ptr<PipelineLayout> pipeline_layout);
     ~DescriptorSet() override;
 
     using HeapType = PipelineLayout::HeapType;
@@ -19,7 +19,6 @@ class DescriptorSet final : public util::ref_counter, public IDescriptorSet {
     const PipelineLayout::DescriptorSetHandles& getDescriptorHandles() { return handles_; }
 
     //@{ IDescriptorSet
-    util::ref_counter& getRefCounter() override { return *this; }
     void updateSamplerDescriptor(ISampler& sampler, std::uint32_t slot) override;
     void updateCombinedTextureSamplerDescriptor(ITexture& texture, ISampler& sampler, std::uint32_t slot,
                                                 std::uint32_t sampler_slot) override;
@@ -29,8 +28,8 @@ class DescriptorSet final : public util::ref_counter, public IDescriptorSet {
     //@}
 
  private:
-    util::ref_ptr<Device> device_;
-    util::ref_ptr<PipelineLayout> pipeline_layout_;
+    std::shared_ptr<Device> device_;
+    std::shared_ptr<PipelineLayout> pipeline_layout_;
     PipelineLayout::DescriptorSetHandles handles_{};
 };
 

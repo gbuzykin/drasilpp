@@ -1,17 +1,13 @@
 #pragma once
 
-#include "buffer.h"
 #include "command_buffer.h"
 #include "dev_queue.h"
 
 namespace drasilpp::rel::vulkan {
 
-class RenderingDriver;
-class PhysicalDevice;
-
-class Device final : public util::ref_counter, public IDevice {
+class Device final : public IDevice {
  public:
-    Device(RenderingDriver& instance, PhysicalDevice& physical_device);
+    Device(std::shared_ptr<RenderingDriver> instance, PhysicalDevice& physical_device);
     ~Device() override;
 
 #define DEVICE_LEVEL_VK_FUNCTION(name) \
@@ -59,21 +55,11 @@ class Device final : public util::ref_counter, public IDevice {
     DevQueue& getComputeQueue() { return compute_queue_; }
 
     //@{ IDevice
-    util::ref_counter& getRefCounter() override { return *this; }
     bool waitDevice() override;
-    util::ref_ptr<ISwapChain> createSwapChain(ISurface& surface, const uxs::db::value& opts) override;
-    util::ref_ptr<IShaderModule> createShaderModule(DataBlob bytecode) override;
-    util::ref_ptr<IPipelineLayout> createPipelineLayout(const uxs::db::value& config) override;
-    util::ref_ptr<IPipeline> createPipeline(IRenderTarget& render_target, IPipelineLayout& pipeline_layout,
-                                            std::span<IShaderModule* const> shader_modules,
-                                            const uxs::db::value& config) override;
-    util::ref_ptr<IBuffer> createBuffer(BufferType type, std::uint64_t size) override;
-    util::ref_ptr<ITexture> createTexture(const TextureDesc& desc) override;
-    util::ref_ptr<ISampler> createSampler(const SamplerDesc& desc) override;
     //@}
 
  private:
-    util::ref_ptr<RenderingDriver> instance_;
+    std::shared_ptr<RenderingDriver> instance_;
     PhysicalDevice& physical_device_;
     DeviceVkFuncTable vk_funcs_;
     VkDevice device_{VK_NULL_HANDLE};

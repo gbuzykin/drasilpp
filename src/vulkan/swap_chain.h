@@ -7,12 +7,9 @@
 
 namespace drasilpp::rel::vulkan {
 
-class Device;
-class Surface;
-
 class SwapChain final : public FrameImageProvider, public ISwapChain {
  public:
-    SwapChain(Device& device, Surface& surface);
+    SwapChain(std::shared_ptr<Device> device, std::shared_ptr<Surface> surface);
     ~SwapChain() override;
 
     static std::uint32_t chooseImageCount(const VkSurfaceCapabilitiesKHR& capabilities, const uxs::db::value& opts);
@@ -38,18 +35,17 @@ class SwapChain final : public FrameImageProvider, public ISwapChain {
     RenderTargetResult acquireFrameImage(std::uint64_t timeout, std::uint32_t& image_index) override;
     RenderTargetResult submitFrameImage(std::uint32_t image_index, CommandBuffer& command_buffer,
                                         VkFence fence) override;
+    void setRenderTarget(RenderTarget* render_target) override;
     void removeRenderTarget(RenderTarget* render_target) override;
     //@}
 
     //@{ ISwapChain
-    util::ref_counter& getRefCounter() override { return *this; }
     bool recreate(const uxs::db::value& opts) override { return create(opts); }
-    util::ref_ptr<IRenderTarget> createRenderTarget(const uxs::db::value& opts) override;
     //@}
 
  private:
-    util::ref_ptr<Device> device_;
-    util::ref_ptr<Surface> surface_;
+    std::shared_ptr<Device> device_;
+    std::shared_ptr<Surface> surface_;
     VkSwapchainKHR swap_chain_{VK_NULL_HANDLE};
     VkFormat image_format_{};
     VkExtent2D image_extent_{};

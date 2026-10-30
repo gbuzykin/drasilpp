@@ -3,18 +3,15 @@
 #include "command_buffer.h"
 
 #include "common/core_defs.h"
+#include "interfaces/i_rendering_driver.h"
 
 #include <uxs/dynarray.h>
 
 namespace drasilpp::rel::vulkan {
 
-class Device;
-class FrameImageProvider;
-class Pipeline;
-
-class RenderTarget final : public util::ref_counter, public IRenderTarget {
+class RenderTarget final : public IRenderTarget {
  public:
-    RenderTarget(Device& device, FrameImageProvider& image_provider);
+    RenderTarget(std::shared_ptr<Device> device, std::shared_ptr<FrameImageProvider> image_provider);
     ~RenderTarget() override;
 
     bool useDepth() const { return use_depth_; }
@@ -26,7 +23,6 @@ class RenderTarget final : public util::ref_counter, public IRenderTarget {
     VkRenderPass getRenderPass() { return render_pass_; }
 
     //@{ IRenderTarget
-    util::ref_counter& getRefCounter() override { return *this; }
     Extent2u getImageExtent() const override { return {.width = image_extent_.width, .height = image_extent_.height}; }
     std::uint32_t getFifCount() const override { return std::uint32_t(frame_render_kits_.size()); }
     bool isInvertedNdcY() const override { return true; }
@@ -46,8 +42,8 @@ class RenderTarget final : public util::ref_counter, public IRenderTarget {
     //@}
 
  private:
-    util::ref_ptr<Device> device_;
-    util::ref_ptr<FrameImageProvider> frame_image_provider_;
+    std::shared_ptr<Device> device_;
+    std::shared_ptr<FrameImageProvider> frame_image_provider_;
     bool use_depth_ = false;
     VkExtent2D image_extent_{};
     VkFormat image_format_{};

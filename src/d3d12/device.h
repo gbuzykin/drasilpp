@@ -6,12 +6,9 @@
 
 namespace drasilpp::rel::d3d12 {
 
-class RenderingDriver;
-class PhysicalDevice;
-
-class Device final : public util::ref_counter, public IDevice {
+class Device final : public IDevice {
  public:
-    Device(RenderingDriver& instance, PhysicalDevice& physical_device);
+    Device(std::shared_ptr<RenderingDriver> instance, PhysicalDevice& physical_device);
     ~Device() override;
 
     std::uint32_t getRtvDescriptorSize() const { return rtv_descriptor_size_; }
@@ -34,21 +31,11 @@ class Device final : public util::ref_counter, public IDevice {
     DevQueue& getDirectQueue() { return direct_queue_; }
 
     //@{ IDevice
-    util::ref_counter& getRefCounter() override { return *this; }
     bool waitDevice() override;
-    util::ref_ptr<ISwapChain> createSwapChain(ISurface& surface, const uxs::db::value& opts) override;
-    util::ref_ptr<IShaderModule> createShaderModule(DataBlob bytecode) override;
-    util::ref_ptr<IPipelineLayout> createPipelineLayout(const uxs::db::value& config) override;
-    util::ref_ptr<IPipeline> createPipeline(IRenderTarget& render_target, IPipelineLayout& pipeline_layout,
-                                            std::span<IShaderModule* const> shader_modules,
-                                            const uxs::db::value& config) override;
-    util::ref_ptr<IBuffer> createBuffer(BufferType type, std::uint64_t size) override;
-    util::ref_ptr<ITexture> createTexture(const TextureDesc& desc) override;
-    util::ref_ptr<ISampler> createSampler(const SamplerDesc& desc) override;
     //@}
 
  private:
-    util::ref_ptr<RenderingDriver> instance_;
+    std::shared_ptr<RenderingDriver> instance_;
     PhysicalDevice& physical_device_;
     util::ref_ptr<ID3D12Device> device_;
     util::ref_ptr<D3D12MA::Allocator> allocator_;

@@ -6,11 +6,9 @@
 
 namespace drasilpp::rel::d3d12 {
 
-class Device;
-
-class Sampler final : public util::ref_counter, public ISampler {
+class Sampler final : public ISampler {
  public:
-    explicit Sampler(Device& device);
+    explicit Sampler(std::shared_ptr<Device> device);
     ~Sampler() override;
 
     bool create(const SamplerDesc& desc);
@@ -18,11 +16,10 @@ class Sampler final : public util::ref_counter, public ISampler {
     const D3D12_SAMPLER_DESC& getSamplerDesc() { return desc_; }
 
     //@{ ISampler
-    util::ref_counter& getRefCounter() override { return *this; }
     //@}
 
  private:
-    util::ref_ptr<Device> device_;
+    std::shared_ptr<Device> device_;
     D3D12_SAMPLER_DESC desc_;
 };
 

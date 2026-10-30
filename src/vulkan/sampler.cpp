@@ -4,6 +4,8 @@
 #include "tables.h"
 #include "vulkan_logger.h"
 
+#include <utility>
+
 using namespace drasilpp;
 using namespace drasilpp::rel;
 using namespace drasilpp::rel::vulkan;
@@ -11,7 +13,7 @@ using namespace drasilpp::rel::vulkan;
 // --------------------------------------------------------
 // Sampler class implementation
 
-Sampler::Sampler(Device& device) : device_(util::not_null{&device}) {}
+Sampler::Sampler(std::shared_ptr<Device> device) : device_(std::move(device)) {}
 
 Sampler::~Sampler() { device_->vkDestroySampler(sampler_, nullptr); }
 

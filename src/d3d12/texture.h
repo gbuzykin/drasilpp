@@ -2,13 +2,13 @@
 
 #include "frame_image_provider.h"
 
-namespace drasilpp::rel::d3d12 {
+#include "util/ref_ptr.h"
 
-class Device;
+namespace drasilpp::rel::d3d12 {
 
 class Texture final : public FrameImageProvider, public ITexture {
  public:
-    explicit Texture(Device& device);
+    explicit Texture(std::shared_ptr<Device> device);
     ~Texture() override;
 
     bool create(const TextureDesc& desc);
@@ -25,18 +25,17 @@ class Texture final : public FrameImageProvider, public ITexture {
     void imageBarrierBefore(ID3D12GraphicsCommandList* command_list, std::uint32_t image_index) override {}
     void imageBarrierAfter(ID3D12GraphicsCommandList* command_list, std::uint32_t image_index) override {}
     RenderTargetResult presentImage() { return RenderTargetResult::SUCCESS; }
+    void setRenderTarget(RenderTarget* render_target) override {}
     void removeRenderTarget(RenderTarget* render_target) override {}
     //@}
 
     //@{ ITexture
-    util::ref_counter& getRefCounter() override { return *this; }
     bool updateTexture(const std::uint8_t* data, std::uint32_t first_subresource,
                        std::span<const UpdateTextureDesc> update_subresource_descs) override;
-    util::ref_ptr<IRenderTarget> createRenderTarget(const uxs::db::value& opts) override;
     //@}
 
  private:
-    util::ref_ptr<Device> device_;
+    std::shared_ptr<Device> device_;
     util::ref_ptr<D3D12MA::Allocation> allocation_;
     Format image_format_{};
     Extent3u image_extent_{};

@@ -1,9 +1,12 @@
 #include "descriptor_set.h"
 
+#include "buffer.h"
 #include "device.h"
 #include "sampler.h"
 #include "tables.h"
 #include "texture.h"
+
+#include <utility>
 
 using namespace drasilpp;
 using namespace drasilpp::rel;
@@ -12,8 +15,8 @@ using namespace drasilpp::rel::vulkan;
 // --------------------------------------------------------
 // DescriptorSet class implementation
 
-DescriptorSet::DescriptorSet(Device& device, PipelineLayout& pipeline_layout)
-    : device_(util::not_null{&device}), pipeline_layout_(util::not_null{&pipeline_layout}) {}
+DescriptorSet::DescriptorSet(std::shared_ptr<Device> device, std::shared_ptr<PipelineLayout> pipeline_layout)
+    : device_(std::move(device)), pipeline_layout_(std::move(pipeline_layout)) {}
 
 DescriptorSet::~DescriptorSet() {}
 

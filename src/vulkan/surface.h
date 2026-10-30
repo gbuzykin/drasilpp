@@ -4,12 +4,9 @@
 
 namespace drasilpp::rel::vulkan {
 
-class RenderingDriver;
-class PhysicalDevice;
-
-class Surface final : public util::ref_counter, public ISurface {
+class Surface final : public ISurface {
  public:
-    explicit Surface(RenderingDriver& instance);
+    explicit Surface(std::shared_ptr<RenderingDriver> instance);
     ~Surface() override;
 
     std::uint32_t getPresentQueueFamily(std::uint32_t n = 0) const;
@@ -29,11 +26,10 @@ class Surface final : public util::ref_counter, public ISurface {
     DevQueue& getPresentQueue() { return present_queue_; }
 
     //@{ ISurface
-    util::ref_counter& getRefCounter() override { return *this; }
     //@}
 
  private:
-    util::ref_ptr<RenderingDriver> instance_;
+    std::shared_ptr<RenderingDriver> instance_;
     VkSurfaceKHR surface_{VK_NULL_HANDLE};
     VkSurfaceCapabilitiesKHR capabilities_{};
     std::vector<VkSurfaceFormatKHR> formats_;

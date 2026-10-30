@@ -10,7 +10,7 @@ using namespace drasilpp::rel::d3d12;
 // --------------------------------------------------------
 // Buffer class implementation
 
-Buffer::Buffer(Device& device) : device_(util::not_null{&device}) {}
+Buffer::Buffer(std::shared_ptr<Device> device) : device_(std::move(device)) {}
 
 Buffer::~Buffer() {}
 

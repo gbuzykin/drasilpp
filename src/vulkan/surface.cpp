@@ -1,9 +1,10 @@
 #include "surface.h"
 
-#include "device.h"
 #include "rendering_driver.h"
 #include "swap_chain.h"
 #include "vulkan_logger.h"
+
+#include <utility>
 
 using namespace drasilpp;
 using namespace drasilpp::rel;
@@ -12,7 +13,7 @@ using namespace drasilpp::rel::vulkan;
 // --------------------------------------------------------
 // Surface class implementation
 
-Surface::Surface(RenderingDriver& instance) : instance_(util::not_null{&instance}) {}
+Surface::Surface(std::shared_ptr<RenderingDriver> instance) : instance_(std::move(instance)) {}
 
 Surface::~Surface() {
     instance_->removeSurface(this);
