@@ -3,7 +3,7 @@
 #include "common/config.h"
 
 #include <uxs/format.h>
-#include <uxs/format_fs.h>
+#include <uxs/format_fs.h>  // IWYU pragma: keep
 
 #include <string_view>
 

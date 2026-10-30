@@ -9,6 +9,8 @@
 
 #include "rel/tables.h"
 
+#include <algorithm>
+#include <climits>
 #include <stdexcept>
 
 using namespace drasilpp;
@@ -18,9 +20,10 @@ using namespace drasilpp::rel::d3d12;
 // --------------------------------------------------------
 // Pipeline class implementation
 
-Pipeline::Pipeline(Device& device, RenderTarget& render_target, PipelineLayout& pipeline_layout)
-    : device_(util::not_null{&device}), render_target_(util::not_null{&render_target}),
-      pipeline_layout_(util::not_null{&pipeline_layout}) {}
+Pipeline::Pipeline(std::shared_ptr<Device> device, std::shared_ptr<RenderTarget> render_target,
+                   std::shared_ptr<PipelineLayout> pipeline_layout)
+    : device_(std::move(device)), render_target_(std::move(render_target)),
+      pipeline_layout_(std::move(pipeline_layout)) {}
 
 Pipeline::~Pipeline() {}
 

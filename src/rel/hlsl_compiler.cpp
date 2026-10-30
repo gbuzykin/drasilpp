@@ -4,10 +4,11 @@
 #include "common/logger.h"
 #include "util/ref_ptr.h"
 
-#include <uxs/db/json.h>
 #include <uxs/dynarray.h>
-#include <uxs/string_util.h>
+#include <uxs/string_utf.h>
 
+#include <atomic>
+#include <cstring>
 #include <mutex>
 
 // clang-format off

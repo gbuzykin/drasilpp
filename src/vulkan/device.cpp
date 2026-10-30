@@ -1,18 +1,14 @@
 #include "device.h"
 
-#include "descriptor_set.h"
-#include "pipeline.h"
-#include "render_target.h"
 #include "rendering_driver.h"
-#include "sampler.h"
-#include "shader_module.h"
 #include "surface.h"
-#include "swap_chain.h"
-#include "texture.h"
 #include "vulkan_logger.h"
 #include "wrappers.h"
 
 #include "rel/tables.h"
+
+#include <algorithm>
+#include <utility>
 
 using namespace drasilpp;
 using namespace drasilpp::rel;
@@ -21,8 +17,8 @@ using namespace drasilpp::rel::vulkan;
 // --------------------------------------------------------
 // Device class implementation
 
-Device::Device(RenderingDriver& instance, PhysicalDevice& physical_device)
-    : instance_(util::not_null(&instance)), physical_device_(physical_device) {}
+Device::Device(std::shared_ptr<RenderingDriver> instance, PhysicalDevice& physical_device)
+    : instance_(std::move(instance)), physical_device_(physical_device) {}
 
 Device::~Device() {
     for (auto& kit : transfer_kits_) {
@@ -453,51 +449,6 @@ bool Device::waitDevice() {
         return false;
     }
     return true;
-}
-
-util::ref_ptr<ISwapChain> Device::createSwapChain(ISurface& surface, const uxs::db::value& opts) {
-    auto swap_chain = util::make_new<SwapChain>(*this, static_cast<Surface&>(surface));
-    if (!swap_chain->create(opts)) { return nullptr; }
-    return std::move(swap_chain);
-}
-
-util::ref_ptr<IShaderModule> Device::createShaderModule(DataBlob bytecode) {
-    auto shader_module = util::make_new<ShaderModule>(*this);
-    if (!shader_module->create(bytecode)) { return nullptr; }
-    return std::move(shader_module);
-}
-
-util::ref_ptr<IPipelineLayout> Device::createPipelineLayout(const uxs::db::value& config) {
-    auto pipeline_layout = util::make_new<PipelineLayout>(*this);
-    if (!pipeline_layout->create(config)) { return nullptr; }
-    return std::move(pipeline_layout);
-}
-
-util::ref_ptr<IPipeline> Device::createPipeline(IRenderTarget& render_target, IPipelineLayout& pipeline_layout,
-                                                std::span<IShaderModule* const> shader_modules,
-                                                const uxs::db::value& config) {
-    auto pipeline = util::make_new<Pipeline>(*this, static_cast<RenderTarget&>(render_target),
-                                             static_cast<PipelineLayout&>(pipeline_layout));
-    if (!pipeline->create(shader_modules, config)) { return nullptr; }
-    return std::move(pipeline);
-}
-
-util::ref_ptr<IBuffer> Device::createBuffer(BufferType type, std::uint64_t size) {
-    auto buffer = util::make_new<Buffer>(*this);
-    if (!buffer->create(type, VkDeviceSize(size))) { return nullptr; }
-    return std::move(buffer);
-}
-
-util::ref_ptr<ITexture> Device::createTexture(const TextureDesc& desc) {
-    auto texture = util::make_new<Texture>(*this);
-    if (!texture->create(desc)) { return nullptr; }
-    return std::move(texture);
-}
-
-util::ref_ptr<ISampler> Device::createSampler(const SamplerDesc& desc) {
-    auto sampler = util::make_new<Sampler>(*this);
-    if (!sampler->create(desc)) { return nullptr; }
-    return std::move(sampler);
 }
 
 //@}

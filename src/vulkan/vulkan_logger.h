@@ -1,9 +1,11 @@
 #pragma once
 
-#include "common/logger.h"
+#include "common/logger.h"  // IWYU pragma: keep
+
+#include <uxs/format_common.h>
 
 #define VK_NO_PROTOTYPES
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.h>  // IWYU pragma: keep
 
 #define LOG_VK "Vulkan: "
 

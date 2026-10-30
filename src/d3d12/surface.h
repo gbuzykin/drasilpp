@@ -1,14 +1,14 @@
 #pragma once
 
+#include "d3d12_api.h"
+
 #include "interfaces/i_rendering_driver.h"
 
 namespace drasilpp::rel::d3d12 {
 
-class RenderingDriver;
-
-class Surface final : public util::ref_counter, public ISurface {
+class Surface final : public ISurface {
  public:
-    explicit Surface(RenderingDriver& instance);
+    explicit Surface(std::shared_ptr<RenderingDriver> instance);
     ~Surface() override;
 
     const WindowDescriptor& getWindowDescriptor() const { return win_desc_; }
@@ -18,11 +18,10 @@ class Surface final : public util::ref_counter, public ISurface {
     RenderingDriver& getInstance() { return *instance_; }
 
     //@{ ISurface
-    util::ref_counter& getRefCounter() override { return *this; }
     //@}
 
  private:
-    util::ref_ptr<RenderingDriver> instance_;
+    std::shared_ptr<RenderingDriver> instance_;
     WindowDescriptor win_desc_;
 };
 

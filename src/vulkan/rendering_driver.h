@@ -9,10 +9,7 @@
 
 namespace drasilpp::rel::vulkan {
 
-class PhysicalDevice;
-class Surface;
-
-class RenderingDriver final : public util::ref_counter, public IRenderingDriver {
+class RenderingDriver final : public std::enable_shared_from_this<RenderingDriver>, public IRenderingDriver {
  public:
     RenderingDriver();
     ~RenderingDriver() override;
@@ -40,14 +37,38 @@ class RenderingDriver final : public util::ref_counter, public IRenderingDriver 
     VkInstance getHandle() { return instance_; }
 
     //@{ IRenderingDriver
-    util::ref_counter& getRefCounter() override { return *this; }
     bool init(const uxs::db::value& app_info) override;
     std::uint32_t getPhysicalDeviceCount() const override;
     const char* getPhysicalDeviceName(std::uint32_t device_index) const override;
     bool isSuitablePhysicalDevice(std::uint32_t device_index, const uxs::db::value& caps) const override;
-    util::ref_ptr<ISurface> createSurface(const WindowDescriptor& win_desc) override;
-    util::ref_ptr<IDevice> createDevice(std::uint32_t device_index, const uxs::db::value& caps) override;
     DataBlob compileShader(const DataBlob& source_text, const uxs::db::value& args, DataBlob& compiler_output) override;
+    std::shared_ptr<ISurface> createSurface(const WindowDescriptor& win_desc) override;
+    std::shared_ptr<IDevice> createDevice(std::uint32_t device_index, const uxs::db::value& caps) override;
+    std::shared_ptr<ISwapChain> createSwapChain(const std::shared_ptr<IDevice>& device,
+                                                const std::shared_ptr<ISurface>& surface,
+                                                const uxs::db::value& opts) override;
+    std::shared_ptr<IShaderModule> createShaderModule(const std::shared_ptr<IDevice>& device,
+                                                      DataBlob bytecode) override;
+    std::shared_ptr<IPipelineLayout> createPipelineLayout(const std::shared_ptr<IDevice>& device,
+                                                          const uxs::db::value& config) override;
+    std::shared_ptr<IPipeline> createPipeline(const std::shared_ptr<IDevice>& device,
+                                              const std::shared_ptr<IRenderTarget>& render_target,
+                                              const std::shared_ptr<IPipelineLayout>& pipeline_layout,
+                                              std::span<IShaderModule* const> shader_modules,
+                                              const uxs::db::value& config) override;
+    std::shared_ptr<IBuffer> createBuffer(const std::shared_ptr<IDevice>& device, BufferType type,
+                                          std::uint64_t size) override;
+    std::shared_ptr<ITexture> createTexture(const std::shared_ptr<IDevice>& device, const TextureDesc& desc) override;
+    std::shared_ptr<ISampler> createSampler(const std::shared_ptr<IDevice>& device, const SamplerDesc& desc) override;
+    std::shared_ptr<IDescriptorSet> createDescriptorSet(const std::shared_ptr<IDevice>& device,
+                                                        const std::shared_ptr<IPipelineLayout>& pipeline_layout,
+                                                        std::uint32_t set_layout_index) override;
+    std::shared_ptr<IRenderTarget> createTextureRenderTarget(const std::shared_ptr<IDevice>& device,
+                                                             const std::shared_ptr<ITexture>& texture,
+                                                             const uxs::db::value& opts) override;
+    std::shared_ptr<IRenderTarget> createSwapChainRenderTarget(const std::shared_ptr<IDevice>& device,
+                                                               const std::shared_ptr<ISwapChain>& swap_chain,
+                                                               const uxs::db::value& opts) override;
     //@}
 
  private:
