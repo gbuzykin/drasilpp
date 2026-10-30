@@ -133,8 +133,9 @@ bool MainWindow::Implementation::createWindow(const char* title, std::uint32_t w
     win_size_.cy = win_rect.bottom - win_rect.top;
 
     hinstance_ = hinstance;
-    hwnd_ = ::CreateWindowExW(0, window_class_name, uxs::wide_string_adapter{}(title).c_str(), WS_OVERLAPPEDWINDOW,
-                              win_rect.left, win_rect.top, win_size_.cx, win_size_.cy, NULL, NULL, hinstance, NULL);
+    hwnd_ = ::CreateWindowExW(0, window_class_name, uxs::utf_string_adapter<wchar_t>{}(title).c_str(),
+                              WS_OVERLAPPEDWINDOW, win_rect.left, win_rect.top, win_size_.cx, win_size_.cy, NULL, NULL,
+                              hinstance, NULL);
     if (!hwnd_) {
         logError("couldn't create Win32 window");
         return false;
@@ -251,7 +252,7 @@ LRESULT MainWindow::Implementation::dispatchMessage(HWND hwnd, UINT message, WPA
         } break;
         case WM_MOUSEWHEEL: {
             const std::int16_t delta = std::int16_t(HIWORD(wparam));
-            main_window_.onMouseWheel(delta * 0.002f, GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam),
+            main_window_.onMouseWheel(delta * 0.002F, GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam),
                                       get_mouse_button_mask(wparam));
         } break;
         case WM_MOUSEMOVE: {

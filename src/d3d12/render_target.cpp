@@ -108,7 +108,7 @@ bool RenderTarget::createFrameResources() {
                 D3D12_RESOURCE_STATE_COMMON,
                 constAddressOf(D3D12_CLEAR_VALUE{
                     .Format = depth_stencil_format_,
-                    .DepthStencil = {.Depth = 1.f, .Stencil = 0},
+                    .DepthStencil = {.Depth = 1.F, .Stencil = 0},
                 }),
                 kit.depth_stencil_allocation.reset_and_get_address(), IID_NULL, nullptr);
             if (result != S_OK) {
@@ -178,12 +178,12 @@ RenderTargetResult RenderTarget::beginRenderTarget(const Color4f& clear_color, f
     frame_image_provider_->imageBarrierBefore(kit.command_list.get(), current_image_index_);
 
     kit.command_list->RSSetViewports(1, constAddressOf(D3D12_VIEWPORT{
-                                            .TopLeftX = 0.f,
-                                            .TopLeftY = 0.f,
+                                            .TopLeftX = 0.F,
+                                            .TopLeftY = 0.F,
                                             .Width = FLOAT(image_extent_.width),
                                             .Height = FLOAT(image_extent_.height),
-                                            .MinDepth = 0.f,
-                                            .MaxDepth = 1.f,
+                                            .MinDepth = 0.F,
+                                            .MaxDepth = 1.F,
                                         }));
 
     kit.command_list->RSSetScissorRects(1, constAddressOf(D3D12_RECT{
@@ -203,7 +203,7 @@ RenderTargetResult RenderTarget::beginRenderTarget(const Color4f& clear_color, f
         const auto dsv_handle = dsv_heap_->GetCPUDescriptorHandleForHeapStart() +
                                 n_frame_ * device_->getDsvDescriptorSize();
 
-        kit.command_list->ClearDepthStencilView(dsv_handle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0,
+        kit.command_list->ClearDepthStencilView(dsv_handle, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0F, 0,
                                                 0, nullptr);
 
         kit.command_list->OMSetRenderTargets(1, &rtv_handle, true, &dsv_handle);

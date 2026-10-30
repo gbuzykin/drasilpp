@@ -7,7 +7,7 @@
 #include <string>
 
 #if defined(WIN32)
-#    include <windows.h>  // NOLINT
+#    include <windows.h>
 #elif defined(__linux__)
 #    include <dlfcn.h>
 #endif
@@ -48,7 +48,7 @@ void* drasilpp::loadDynamicLibrary(const std::filesystem::path& library_dir, std
             ::FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr, error_code,
                              MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT), (LPWSTR)&buffer, 0, nullptr);
             if (buffer) {
-                error_message = uxs::from_wide_to_utf8(buffer);
+                error_message = uxs::utf_string_adapter<char>{}(buffer);
                 ::LocalFree(buffer);
             }
         } catch (...) {

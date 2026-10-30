@@ -48,9 +48,9 @@ class Timer {
  private:
     std::chrono::high_resolution_clock::time_point start_{};
     bool is_suspended_ = true;
-    double last_resume_time_ = 0.f;
-    double current_ = 0.f;
-    double delta_ = 0.f;
+    double last_resume_time_ = 0.F;
+    double current_ = 0.F;
+    double delta_ = 0.F;
 };
 
 template<typename Ty, std::size_t Alignment = 256>
@@ -126,8 +126,8 @@ class AppMainWindow final : public MainWindow {
     void onMouseButtonEvent(KeyCode button, bool state, std::int32_t x, std::int32_t y) override {
         if (button != KeyCode::MOUSE_LBUTTON && button != KeyCode::MOUSE_MBUTTON) { return; }
         if (state) {
-            rel::Vec2f p{float(x - .5f * viewport_extent_.width) / viewport_extent_.height,
-                         float(.5f * viewport_extent_.height - y) / viewport_extent_.height};
+            rel::Vec2f p{float(x - .5F * viewport_extent_.width) / viewport_extent_.height,
+                         float(.5F * viewport_extent_.height - y) / viewport_extent_.height};
             manipulator_.startDragging(p, button == KeyCode::MOUSE_LBUTTON ?
                                               rel::OrbitCameraManipulator::DragAction::ROTATE :
                                               rel::OrbitCameraManipulator::DragAction::MOVE);
@@ -137,13 +137,13 @@ class AppMainWindow final : public MainWindow {
     }
 
     void onMouseMove(std::int32_t x, std::int32_t y, std::uint8_t button_mask) override {
-        rel::Vec2f p{float(x - .5f * viewport_extent_.width) / viewport_extent_.height,
-                     float(.5f * viewport_extent_.height - y) / viewport_extent_.height};
+        rel::Vec2f p{float(x - .5F * viewport_extent_.width) / viewport_extent_.height,
+                     float(.5F * viewport_extent_.height - y) / viewport_extent_.height};
         manipulator_.drag(p);
     }
 
     void onMouseWheel(float distance, std::int32_t x, std::int32_t y, std::uint8_t button_mask) override {
-        manipulator_.moveZ(.2f * distance);
+        manipulator_.moveZ(.2F * distance);
     }
 
  private:
@@ -202,9 +202,9 @@ class AppMainWindow final : public MainWindow {
     bool renderScene();
 };
 
-#define JSON(...) uxs::db::json::read_from_string(#__VA_ARGS__)
-
 int AppMainWindow::init(int argc, char** argv) {
+    using namespace uxs::db::json::literals;
+
     void* driver_library = loadDynamicLibrary(".", "drasilpp-rel-vulkan");
     if (!driver_library) { return -1; }
 
@@ -212,7 +212,7 @@ int AppMainWindow::init(int argc, char** argv) {
                                                                           "drasilppGetRenderingDriverDescriptor");
     if (!entry) { return -1; }
 
-    const auto app_info = JSON({"name" : "DrasilPP", "version" : [ 1, 0, 0 ]});
+    const auto app_info = R"({"name": "DrasilPP", "version": [1, 0, 0]})"_json;
 
     if (!(driver_ = entry()->create_func()) || !driver_->init(app_info)) { return -1; }
 
@@ -225,7 +225,7 @@ int AppMainWindow::init(int argc, char** argv) {
     std::uint32_t device_index = 0;
     std::uint32_t device_count = driver_->getPhysicalDeviceCount();
 
-    device_caps_ = JSON({"needs_compute" : true});
+    device_caps_ = R"({"needs_compute": true})"_json;
 
     for (device_index = 0; device_index < device_count; ++device_index) {
         logInfo("device #{}: {}", device_index, driver_->getPhysicalDeviceName(device_index));
@@ -243,7 +243,7 @@ int AppMainWindow::init(int argc, char** argv) {
 
     if (!(swap_chain_ = device_->createSwapChain(*surface_, swap_chain_opts_))) { return -1; }
 
-    if (!(render_target_ = swap_chain_->createRenderTarget(JSON({"use_depth" : true})))) { return -1; }
+    if (!(render_target_ = swap_chain_->createRenderTarget(R"({"use_depth": true})"_json))) { return -1; }
     is_inverted_y_ndc_ = render_target_->isInvertedNdcY();
     viewport_extent_ = render_target_->getImageExtent();
 
@@ -283,38 +283,51 @@ util::ref_ptr<rel::IShaderModule> AppMainWindow::compileShaderModule(const char*
 }
 
 bool AppMainWindow::initScene() {
+    using namespace uxs::db::json::literals;
+
     vertex_shader_module_ = compileShaderModule("data/shaders/transform/vert.hlsl", "vs_6_0");
     if (!vertex_shader_module_) { return false; }
 
     pixel_shader_module_ = compileShaderModule("data/shaders/transform/pix.hlsl", "ps_6_0");
     if (!pixel_shader_module_) { return false; }
 
-    const auto pipeline_layout_config = JSON({
-        "descriptor_set_layouts" : [ {
-            "descriptor_list" : [
-                {"type" : "COMBINED_TEXTURE_SAMPLER", "shader_visibility" : "PIXEL"},  //
-                {"type" : "CONSTANT_BUFFER_DYNAMIC", "shader_visibility" : "VERTEX"}   //
-            ]
-        } ]
-    });
+    const auto pipeline_layout_config = R"({
+            "descriptor_set_layouts": [{
+                "descriptor_list": [{
+                    "type": "COMBINED_TEXTURE_SAMPLER",
+                    "shader_visibility": "PIXEL"
+                }, {
+                    "type": "CONSTANT_BUFFER_DYNAMIC",
+                    "shader_visibility": "VERTEX"
+                }]
+            }]
+        })"_json;
 
     if (!(pipeline_layout_ = device_->createPipelineLayout(pipeline_layout_config))) { return false; }
 
-    const auto pipeline_config = JSON({
-        "dynamic_primitive_topology" : true,
-        "dynamic_vertex_stride" : true,
-        "stages" : [
-            {"stage" : "VERTEX", "entry" : "main"},  //
-            {"stage" : "PIXEL", "entry" : "main"}    //
-        ],
-        "vertex_layouts" : [ {
-            "attributes" : [
-                {"name" : "POSITION", "format" : "FLOAT3"},  //
-                {"name" : "NORMAL", "format" : "FLOAT3"},    //
-                {"name" : "TEXCOORD", "format" : "FLOAT2"}   //
-            ]
-        } ]
-    });
+    const auto pipeline_config = R"({
+            "dynamic_primitive_topology": true,
+            "dynamic_vertex_stride": true,
+            "stages": [{
+                "stage": "VERTEX",
+                "entry": "main"
+            }, {
+                "stage": "PIXEL",
+                "entry": "main"
+            }],
+            "vertex_layouts": [{
+                "attributes": [{
+                    "name": "POSITION",
+                    "format": "FLOAT3"
+                }, {
+                    "name": "NORMAL",
+                    "format": "FLOAT3"
+                }, {
+                    "name": "TEXCOORD",
+                    "format": "FLOAT2"
+                }]
+            }]
+        })"_json;
 
     if (!(pipeline_ = device_->createPipeline(*render_target_, *pipeline_layout_,
                                               std::array{vertex_shader_module_.get(), pixel_shader_module_.get()},
@@ -373,13 +386,13 @@ bool AppMainWindow::initScene() {
 }
 
 void AppMainWindow::updateMatrices(Padded<CB0>* cb0) {
-    const auto r = rel::Mat4f::rotate(5.f * timer_.getCurrent(), {0.f, 1.f, 0.f});
-    const auto m1 = r * rel::Mat4f::translate({-1.f, 0.f, 0.f});
-    const auto m2 = r * rel::Mat4f::translate({1.f, 0.f, 0.f});
+    const auto r = rel::Mat4f::rotate(5.F * timer_.getCurrent(), {0.F, 1.F, 0.F});
+    const auto m1 = r * rel::Mat4f::translate({-1.F, 0.F, 0.F});
+    const auto m2 = r * rel::Mat4f::translate({1.F, 0.F, 0.F});
     const auto v = rel::Mat4f::lookAt(camera_.eye, camera_.center, camera_.up);
     const auto mv1 = m1 * v;
     const auto mv2 = m2 * v;
-    auto p = rel::Mat4f::perspective(float(viewport_extent_.width) / viewport_extent_.height, 50.0f, 0.5f, 50.0f);
+    auto p = rel::Mat4f::perspective(float(viewport_extent_.width) / viewport_extent_.height, 50.0F, 0.5F, 50.0F);
     if (is_inverted_y_ndc_) { p.m[1][1] = -p.m[1][1]; }
     cb0[0].mv = rel::Mat3f(mv1);
     cb0[0].mvp = mv1 * p;
@@ -390,7 +403,7 @@ void AppMainWindow::updateMatrices(Padded<CB0>* cb0) {
 bool AppMainWindow::renderScene() {
     auto& frame = frame_data_[n_frame_];
 
-    const auto result = render_target_->beginRenderTarget({0.1f, 0.2f, 0.3f, 1.0f}, 1.0f, 0, *pipeline_);
+    const auto result = render_target_->beginRenderTarget({0.1F, 0.2F, 0.3F, 1.0F}, 1.0F, 0, *pipeline_);
     if (result == rel::RenderTargetResult::SUBOPTIMAL || result == rel::RenderTargetResult::OUT_OF_DATE) {
         if (!recreateSwapChain()) { return false; }
         if (result == rel::RenderTargetResult::OUT_OF_DATE) { return true; }

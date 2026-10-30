@@ -21,7 +21,7 @@ void calculateTangentAndBitangent(const rel::Vec3f& normal, const rel::Vec3f& fa
     tangent = normalize(face_tangent - normal * dot(normal, face_tangent));
 
     // Calculate handedness
-    float handedness = (dot(cross(normal, tangent), face_bitangent) < 0.0f) ? -1.0f : 1.0f;
+    float handedness = (dot(cross(normal, tangent), face_bitangent) < 0.0F) ? -1.0F : 1.0F;
 
     bitangent = handedness * cross(normal, tangent);
 }
@@ -50,7 +50,7 @@ void generateTangentSpaceVectors(Model& mesh) {
             const rel::Vec2f t1{v2.w.x - v1.w.x, v2.w.y - v1.w.y};
             const rel::Vec2f t2{v3.w.x - v1.w.x, v3.w.y - v1.w.y};
 
-            const float r = 1.f / (t1.x * t2.y - t2.x * t1.y);
+            const float r = 1.F / (t1.x * t2.y - t2.x * t1.y);
             const rel::Vec3f face_tangent = {(t2.y * s1.x - t1.y * s2.x) * r, (t2.y * s1.y - t1.y * s2.y) * r,
                                              (t2.y * s1.z - t1.y * s2.z) * r};
             const rel::Vec3f face_bitangent = {(t1.x * s2.x - t2.x * s1.x) * r, (t1.x * s2.y - t2.x * s1.y) * r,
@@ -119,7 +119,7 @@ bool drasilpp::loadModelFromObjFile(const char* filename, LoadModelFlags flags, 
 
             if (!!(flags & LoadModelFlags::GEN_TANGENT_SPACE_VECTORS)) {
                 // Insert temporary tangent space vectors data
-                for (int i = 0; i < 6; ++i) { model.data.push_back(0.0f); }
+                for (int i = 0; i < 6; ++i) { model.data.push_back(0.0F); }
             }
         }
 
@@ -147,8 +147,8 @@ bool drasilpp::loadModelFromObjFile(const char* filename, LoadModelFlags flags, 
             c_min.z = std::min(c_min.z, model.data[i + 2]), c_max.z = std::max(c_max.z, model.data[i + 2]);
         }
 
-        const rel::Vec3f offset{0.5f * (c_min.x + c_max.x), 0.5f * (c_min.y + c_max.y), 0.5f * (c_min.z + c_max.z)};
-        const float scale = 1.f / std::max(std::max(c_max.x - offset.x, c_max.y - offset.y), c_max.z - offset.z);
+        const rel::Vec3f offset{0.5F * (c_min.x + c_max.x), 0.5F * (c_min.y + c_max.y), 0.5F * (c_min.z + c_max.z)};
+        const float scale = 1.F / std::max(std::max(c_max.x - offset.x, c_max.y - offset.y), c_max.z - offset.z);
 
         for (size_t i = 0; i < model.data.size(); i += stride) {
             model.data[i + 0] = scale * (model.data[i + 0] - offset.x);

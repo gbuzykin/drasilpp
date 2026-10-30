@@ -94,7 +94,7 @@ PhysicalDevice::PhysicalDevice(util::ref_ptr<IDXGIAdapter> adapter) : adapter_(s
 
 bool PhysicalDevice::loadDescription() {
     adapter_->GetDesc(&adapter_desc_);
-    name_ = uxs::utf8_string_adapter{}(adapter_desc_.Description);
+    name_ = uxs::utf_string_adapter<char>{}(adapter_desc_.Description);
     return true;
 }
 

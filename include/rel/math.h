@@ -19,8 +19,8 @@ struct Vec4f {
     explicit constexpr operator Vec3f() const { return {.x = x, .y = y, .z = z}; }
 };
 
-constexpr float deg2rad(float a) { return a * 0.017453292529943296f; }
-constexpr float rad2deg(float a) { return a * 57.29577951308232f; }
+constexpr float deg2rad(float a) { return a * 0.017453292529943296F; }
+constexpr float rad2deg(float a) { return a * 57.29577951308232F; }
 inline float length(const Vec3f& v) { return std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z); }
 
 inline Vec3f normalize(const Vec3f& v) {
@@ -45,28 +45,28 @@ struct Mat4f {
     float m[4][4];
 
     static constexpr Mat4f zero() {
-        return {{{0.f, 0.f, 0.f, 0.f}, {0.f, 0.f, 0.f, 0.f}, {0.f, 0.f, 0.f, 0.f}, {0.f, 0.f, 0.f, 0.f}}};
+        return {{{0.F, 0.F, 0.F, 0.F}, {0.F, 0.F, 0.F, 0.F}, {0.F, 0.F, 0.F, 0.F}, {0.F, 0.F, 0.F, 0.F}}};
     }
 
     static constexpr Mat4f identity() {
-        return {{{1.f, 0.f, 0.f, 0.f}, {0.f, 1.f, 0.f, 0.f}, {0.f, 0.f, 1.f, 0.f}, {0.f, 0.f, 0.f, 1.f}}};
+        return {{{1.F, 0.F, 0.F, 0.F}, {0.F, 1.F, 0.F, 0.F}, {0.F, 0.F, 1.F, 0.F}, {0.F, 0.F, 0.F, 1.F}}};
     }
 
     static constexpr Mat4f translate(const Vec3f& t) {
-        return {{{1.f, 0.f, 0.f, 0.f}, {0.f, 1.f, 0.f, 0.f}, {0.f, 0.f, 1.f, 0.f}, {t.x, t.y, t.z, 1.f}}};
+        return {{{1.F, 0.F, 0.F, 0.F}, {0.F, 1.F, 0.F, 0.F}, {0.F, 0.F, 1.F, 0.F}, {t.x, t.y, t.z, 1.F}}};
     }
 
     static Mat4f rotate(float angle, const Vec3f& axis) {
         const float c = std::cos(deg2rad(angle));
         const float s = std::sin(deg2rad(angle));
-        const float one_minus_c = 1.f - c;
+        const float one_minus_c = 1.F - c;
         return {{{axis.x * axis.x * one_minus_c + c, axis.x * axis.y * one_minus_c + axis.z * s,
-                  axis.x * axis.z * one_minus_c - axis.y * s, 0.f},
+                  axis.x * axis.z * one_minus_c - axis.y * s, 0.F},
                  {axis.y * axis.x * one_minus_c - axis.z * s, axis.y * axis.y * one_minus_c + c,
-                  axis.y * axis.z * one_minus_c + axis.x * s, 0.f},
+                  axis.y * axis.z * one_minus_c + axis.x * s, 0.F},
                  {axis.z * axis.x * one_minus_c + axis.y * s, axis.z * axis.y * one_minus_c - axis.x * s,
-                  axis.z * axis.z * one_minus_c + c, 0.f},
-                 {0.f, 0.f, 0.f, 1.f}}};
+                  axis.z * axis.z * one_minus_c + c, 0.F},
+                 {0.F, 0.F, 0.F, 1.F}}};
     }
 
     static Mat4f lookAt(const Vec3f& eye, const Vec3f& center, const Vec3f& updir) {
@@ -75,19 +75,19 @@ struct Mat4f {
         const auto up = normalize(cross(back, right));
 
         return {{
-            {right.x, up.x, back.x, 0.f},
-            {right.y, up.y, back.y, 0.f},
-            {right.z, up.z, back.z, 0.f},
-            {-dot(eye, right), -dot(eye, up), -dot(eye, back), 1.f},
+            {right.x, up.x, back.x, 0.F},
+            {right.y, up.y, back.y, 0.F},
+            {right.z, up.z, back.z, 0.F},
+            {-dot(eye, right), -dot(eye, up), -dot(eye, back), 1.F},
         }};
     }
 
     static Mat4f perspective(float ratio, float fov, float near, float far) {
-        const float f = 1.0f / std::tan(deg2rad(0.5f * fov));
-        return {{{f / ratio, 0.f, 0.f, 0.f},
-                 {0.f, f, 0.f, 0.f},
-                 {0.f, 0.f, far / (near - far), -1.f},
-                 {0.f, 0.f, near * far / (near - far), 0.f}}};
+        const float f = 1.0F / std::tan(deg2rad(0.5F * fov));
+        return {{{f / ratio, 0.F, 0.F, 0.F},
+                 {0.F, f, 0.F, 0.F},
+                 {0.F, 0.F, far / (near - far), -1.F},
+                 {0.F, 0.F, near * far / (near - far), 0.F}}};
     }
 
     constexpr Mat4f transpose() const {

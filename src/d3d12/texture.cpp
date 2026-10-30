@@ -61,7 +61,7 @@ bool Texture::create(const TextureDesc& desc) {
             {
                 .MostDetailedMip = 0,
                 .MipLevels = UINT(num_mipmaps),
-                .ResourceMinLODClamp = 0.0f,
+                .ResourceMinLODClamp = 0.0F,
             },
     };
 

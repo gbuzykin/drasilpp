@@ -280,12 +280,12 @@ RenderTargetResult RenderTarget::beginRenderTarget(const Color4f& clear_color, f
     kit.command_buffer.beginRenderPass(render_pass_, kit.framebuffer, view_rect, VK_SUBPASS_CONTENTS_INLINE,
                                        clear_values, attachments);
 
-    kit.command_buffer.setViewports(0, std::array{VkViewport{.x = 0.f,
-                                                             .y = 0.f,
+    kit.command_buffer.setViewports(0, std::array{VkViewport{.x = 0.F,
+                                                             .y = 0.F,
                                                              .width = float(image_extent_.width),
                                                              .height = float(image_extent_.height),
-                                                             .minDepth = 0.f,
-                                                             .maxDepth = 1.f}});
+                                                             .minDepth = 0.F,
+                                                             .maxDepth = 1.F}});
 
     kit.command_buffer.setScissors(0, std::array{view_rect});
 

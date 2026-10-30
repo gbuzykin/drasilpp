@@ -14,8 +14,8 @@
 namespace drasilpp::util {
 
 template<typename Range, typename Ty>
-concept is_contiguous_range = requires(Range r) {
-    { std::data(r) + std::size(r) } -> std::convertible_to<Ty*>;
+concept contiguous_range_of = std::ranges::contiguous_range<Range> && requires(Range r) {
+    { std::data(r) } -> std::convertible_to<Ty*>;
 };
 
 template<typename... Ts>
@@ -23,10 +23,10 @@ class multispan {
  public:
     multispan() = default;
     template<typename... Range>
-        requires(is_contiguous_range<std::remove_reference_t<Range>, Ts> && ...)
+        requires(contiguous_range_of<Range, Ts> && ...)
     multispan(Range&&... ranges)
         : size_(std::get<0>(std::make_tuple(std::size(ranges)...))), ptrs_(std::data(ranges)...) {
-        assert((std::size(ranges) == ...));
+        assert(((std::size(ranges) == size_) && ...));
     }
 
     std::size_t size() const { return size_; }
