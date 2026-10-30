@@ -221,6 +221,7 @@ bool PipelineLayout::create(const uxs::db::value& config) {
                                                       errors->GetBufferSize()) :
                                      std::string_view{};
     if (result != S_OK) {
+        logError(LOG_D3D12 "couldn't serialize root signature: {}", D3D12Result(result));
         logError(LOG_D3D12 "{}", error_text);
         return false;
     }

@@ -122,13 +122,12 @@ DataBlob HlslCompiler::Implementation::compileShader(const DataBlob& source_text
         .Encoding = DXC_CP_ACP,
     };
 
-    std::unique_lock lk(mtx_);
-
-    util::ref_ptr<IDxcResult> results;
-    dxc_compiler_->Compile(&source, args_array.data(), UINT32(args_array.size()), &*include_handler_,
-                           IID_PPV_ARGS(results.reset_and_get_address()));
-
-    lk.unlock();
+    {
+        std::lock_guard lk(mtx_);
+        util::ref_ptr<IDxcResult> results;
+        dxc_compiler_->Compile(&source, args_array.data(), UINT32(args_array.size()), &*include_handler_,
+                               IID_PPV_ARGS(results.reset_and_get_address()));
+    }
 
     util::ref_ptr<IDxcBlobUtf8> errors;
     results->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(errors.reset_and_get_address()), nullptr);
