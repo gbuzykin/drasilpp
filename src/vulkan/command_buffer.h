@@ -2,7 +2,6 @@
 
 #include "vulkan_api.h"
 
-#include "interfaces/i_rendering_driver.h"
 #include "util/range_helpers.h"
 
 namespace drasilpp::rel::vulkan {

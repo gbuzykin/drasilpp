@@ -10,11 +10,9 @@
 
 namespace drasilpp::rel::vulkan {
 
-class Device;
-
-class PipelineLayout : public util::ref_counter, public IPipelineLayout {
+class PipelineLayout : public IPipelineLayout {
  public:
-    explicit PipelineLayout(Device& device);
+    explicit PipelineLayout(std::shared_ptr<Device> device);
     ~PipelineLayout();
 
     template<typename Ty>
@@ -49,13 +47,11 @@ class PipelineLayout : public util::ref_counter, public IPipelineLayout {
     VkPipelineLayout getHandle() { return pipeline_layout_; }
 
     //@{ IPipelineLayout
-    util::ref_counter& getRefCounter() override { return *this; }
-    util::ref_ptr<IDescriptorSet> createDescriptorSet(std::uint32_t set_layout_index) override;
     void resetDescriptorAllocator() override;
     //@}
 
  private:
-    util::ref_ptr<Device> device_;
+    std::shared_ptr<Device> device_;
     VkPipelineLayout pipeline_layout_{VK_NULL_HANDLE};
     VkDescriptorPool desc_pool_{VK_NULL_HANDLE};
 

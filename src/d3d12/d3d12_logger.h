@@ -1,8 +1,13 @@
 #pragma once
 
-#include "common/logger.h"
+#include "common/logger.h"  // NOLINT
+
+#include <uxs/format_common.h>
+#include <uxs/string_conv_common.h>
 
 #include <d3d12.h>
+
+#include <cstdint>
 
 #ifdef min
 #    undef min

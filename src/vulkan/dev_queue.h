@@ -12,9 +12,6 @@
 
 namespace drasilpp::rel::vulkan {
 
-class Device;
-class CommandBuffer;
-
 class DevQueue {
  public:
     DevQueue() = default;

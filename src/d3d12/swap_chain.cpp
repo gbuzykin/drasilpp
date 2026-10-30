@@ -15,8 +15,8 @@ using namespace drasilpp::rel::d3d12;
 // --------------------------------------------------------
 // SwapChain class implementation
 
-SwapChain::SwapChain(Device& device, Surface& surface)
-    : device_(util::not_null{&device}), surface_(util::not_null{&surface}) {}
+SwapChain::SwapChain(std::shared_ptr<Device> device, std::shared_ptr<Surface> surface)
+    : device_(std::move(device)), surface_(std::move(surface)) {}
 
 SwapChain::~SwapChain() {}
 
@@ -47,6 +47,8 @@ RenderTargetResult SwapChain::presentImage() {
     return RenderTargetResult::SUCCESS;
 }
 
+void SwapChain::setRenderTarget(RenderTarget* render_target) { render_target_ = render_target; }
+
 void SwapChain::removeRenderTarget(RenderTarget* render_target) {
     if (render_target_ == render_target) { render_target_ = nullptr; }
 }
@@ -54,13 +56,6 @@ void SwapChain::removeRenderTarget(RenderTarget* render_target) {
 //@{ ISwapChain
 
 bool SwapChain::recreate(const uxs::db::value& opts) { return recreateSwapChainResources(opts); }
-
-util::ref_ptr<IRenderTarget> SwapChain::createRenderTarget(const uxs::db::value& opts) {
-    auto render_target = util::make_new<RenderTarget>(*device_, *this);
-    if (!render_target->create(opts)) { return nullptr; }
-    render_target_ = render_target.get();
-    return std::move(render_target);
-}
 
 //@}
 

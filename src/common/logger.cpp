@@ -1,11 +1,13 @@
 #include "common/logger.h"
 
-#include <uxs/format_chrono.h>
+#include <uxs/format_chrono.h>  // NOLINT
 #include <uxs/io/iobuf.h>
 
 #include <chrono>
-#include <ctime>
 #include <mutex>
+#ifdef __GNUC__
+#    include <ctime>
+#endif
 
 namespace {
 uxs::iobuf& g_out = uxs::stdbuf::out();

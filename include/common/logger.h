@@ -3,7 +3,7 @@
 #include "common/config.h"
 
 #include <uxs/format.h>
-#include <uxs/format_fs.h>
+#include <uxs/format_fs.h>  // NOLINT
 
 #include <string_view>
 

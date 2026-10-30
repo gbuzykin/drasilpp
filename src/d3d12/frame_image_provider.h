@@ -6,9 +6,7 @@
 
 namespace drasilpp::rel::d3d12 {
 
-class RenderTarget;
-
-class FrameImageProvider : public util::ref_counter {
+class FrameImageProvider {
  public:
     virtual ID3D12Resource* getImageResource(std::uint32_t image_index) = 0;
     virtual std::uint32_t getImageCount() const = 0;
@@ -18,6 +16,7 @@ class FrameImageProvider : public util::ref_counter {
     virtual void imageBarrierBefore(ID3D12GraphicsCommandList* command_list, std::uint32_t image_index) = 0;
     virtual void imageBarrierAfter(ID3D12GraphicsCommandList* command_list, std::uint32_t image_index) = 0;
     virtual RenderTargetResult presentImage() = 0;
+    virtual void setRenderTarget(RenderTarget* render_target) = 0;
     virtual void removeRenderTarget(RenderTarget* render_target) = 0;
 };
 

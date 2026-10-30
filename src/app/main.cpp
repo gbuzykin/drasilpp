@@ -16,7 +16,9 @@
 #include <array>
 #include <chrono>
 #include <exception>
+#include <string>
 #include <thread>
+#include <utility>
 
 using namespace drasilpp;
 
@@ -155,27 +157,27 @@ class AppMainWindow final : public MainWindow {
     bool is_inverted_y_ndc_ = false;
     rel::Extent2u viewport_extent_{};
 
-    util::ref_ptr<rel::IRenderingDriver> driver_;
-    util::ref_ptr<rel::ISurface> surface_;
+    std::shared_ptr<rel::IRenderingDriver> driver_;
+    std::shared_ptr<rel::ISurface> surface_;
 
     uxs::db::value device_caps_;
-    util::ref_ptr<rel::IDevice> device_;
+    std::shared_ptr<rel::IDevice> device_;
 
     uxs::db::value swap_chain_opts_;
-    util::ref_ptr<rel::ISwapChain> swap_chain_;
+    std::shared_ptr<rel::ISwapChain> swap_chain_;
 
-    util::ref_ptr<rel::IRenderTarget> render_target_;
-    util::ref_ptr<rel::IShaderModule> vertex_shader_module_;
-    util::ref_ptr<rel::IShaderModule> pixel_shader_module_;
-    util::ref_ptr<rel::IPipelineLayout> pipeline_layout_;
-    util::ref_ptr<rel::IPipeline> pipeline_;
-    util::ref_ptr<rel::ITexture> texture_;
-    util::ref_ptr<rel::ISampler> sampler_;
-    util::ref_ptr<rel::IBuffer> vertex_buffer_;
+    std::shared_ptr<rel::IRenderTarget> render_target_;
+    std::shared_ptr<rel::IShaderModule> vertex_shader_module_;
+    std::shared_ptr<rel::IShaderModule> pixel_shader_module_;
+    std::shared_ptr<rel::IPipelineLayout> pipeline_layout_;
+    std::shared_ptr<rel::IPipeline> pipeline_;
+    std::shared_ptr<rel::ITexture> texture_;
+    std::shared_ptr<rel::ISampler> sampler_;
+    std::shared_ptr<rel::IBuffer> vertex_buffer_;
 
     struct FrameData {
-        util::ref_ptr<rel::IDescriptorSet> descriptor_set;
-        util::ref_ptr<rel::IBuffer> cbuffer0;
+        std::shared_ptr<rel::IDescriptorSet> descriptor_set;
+        std::shared_ptr<rel::IBuffer> cbuffer0;
         std::array<Padded<CB0>, 2> cb0;
     };
 
@@ -196,7 +198,7 @@ class AppMainWindow final : public MainWindow {
         return true;
     }
 
-    util::ref_ptr<rel::IShaderModule> compileShaderModule(const char* filename, const char* target);
+    std::shared_ptr<rel::IShaderModule> compileShaderModule(const char* filename, const char* target);
     bool initScene();
     void updateMatrices(Padded<CB0>* cb0);
     bool renderScene();
@@ -241,9 +243,11 @@ int AppMainWindow::init(int argc, char** argv) {
 
     if (!(device_ = driver_->createDevice(device_index, device_caps_))) { return -1; }
 
-    if (!(swap_chain_ = device_->createSwapChain(*surface_, swap_chain_opts_))) { return -1; }
+    if (!(swap_chain_ = driver_->createSwapChain(device_, surface_, swap_chain_opts_))) { return -1; }
 
-    if (!(render_target_ = swap_chain_->createRenderTarget(R"({"use_depth": true})"_json))) { return -1; }
+    if (!(render_target_ = driver_->createSwapChainRenderTarget(device_, swap_chain_, R"({"use_depth": true})"_json))) {
+        return -1;
+    }
     is_inverted_y_ndc_ = render_target_->isInvertedNdcY();
     viewport_extent_ = render_target_->getImageExtent();
 
@@ -255,7 +259,7 @@ int AppMainWindow::init(int argc, char** argv) {
     return 0;
 }
 
-util::ref_ptr<rel::IShaderModule> AppMainWindow::compileShaderModule(const char* filename, const char* target) {
+std::shared_ptr<rel::IShaderModule> AppMainWindow::compileShaderModule(const char* filename, const char* target) {
     if (uxs::filebuf ifile(filename, "r"); ifile) {
         rel::DataBlob shader_text(ifile.seek(0, uxs::seekdir::end));
         ifile.seek(0);
@@ -274,7 +278,7 @@ util::ref_ptr<rel::IShaderModule> AppMainWindow::compileShaderModule(const char*
 
         if (!compiler_output.isEmpty()) { logWarning("{}", compiler_output.getTextView()); }
 
-        return device_->createShaderModule(std::move(shader_binary));
+        return driver_->createShaderModule(device_, std::move(shader_binary));
     } else {
         logError("couldn't open '{}' shader file", filename);
     }
@@ -303,7 +307,7 @@ bool AppMainWindow::initScene() {
             }]
         })"_json;
 
-    if (!(pipeline_layout_ = device_->createPipelineLayout(pipeline_layout_config))) { return false; }
+    if (!(pipeline_layout_ = driver_->createPipelineLayout(device_, pipeline_layout_config))) { return false; }
 
     const auto pipeline_config = R"({
             "dynamic_primitive_topology": true,
@@ -329,7 +333,7 @@ bool AppMainWindow::initScene() {
             }]
         })"_json;
 
-    if (!(pipeline_ = device_->createPipeline(*render_target_, *pipeline_layout_,
+    if (!(pipeline_ = driver_->createPipeline(device_, render_target_, pipeline_layout_,
                                               std::array{vertex_shader_module_.get(), pixel_shader_module_.get()},
                                               pipeline_config))) {
         return false;
@@ -342,18 +346,18 @@ bool AppMainWindow::initScene() {
         .extent = {.width = image_.width, .height = image_.height, .depth = 1},
     };
 
-    if (!(texture_ = device_->createTexture(texture_desc))) { return false; }
+    if (!(texture_ = driver_->createTexture(device_, texture_desc))) { return false; }
 
     if (!texture_->updateTexture(image_.data.data(), 0,
                                  std::array{rel::UpdateTextureDesc{.image_extent = texture_desc.extent}})) {
         return false;
     }
 
-    if (!(sampler_ = device_->createSampler(rel::SamplerDesc{
-              .filter = rel::SamplerFilter::MIN_MAG_LINEAR_MIP_POINT,
-              .address_mode_u = rel::SamplerAddressMode::REPEAT,
-              .address_mode_v = rel::SamplerAddressMode::REPEAT,
-          }))) {
+    if (!(sampler_ = driver_->createSampler(device_, rel::SamplerDesc{
+                                                         .filter = rel::SamplerFilter::MIN_MAG_LINEAR_MIP_POINT,
+                                                         .address_mode_u = rel::SamplerAddressMode::REPEAT,
+                                                         .address_mode_v = rel::SamplerAddressMode::REPEAT,
+                                                     }))) {
         return false;
     }
 
@@ -364,8 +368,10 @@ bool AppMainWindow::initScene() {
     }
 
     for (auto& frame : frame_data_) {
-        if (!(frame.descriptor_set = pipeline_layout_->createDescriptorSet(0))) { return false; }
-        if (!(frame.cbuffer0 = device_->createBuffer(rel::BufferType::CONSTANT, sizeof(frame.cb0)))) { return false; }
+        if (!(frame.descriptor_set = driver_->createDescriptorSet(device_, pipeline_layout_, 0))) { return false; }
+        if (!(frame.cbuffer0 = driver_->createBuffer(device_, rel::BufferType::CONSTANT, sizeof(frame.cb0)))) {
+            return false;
+        }
         frame.descriptor_set->updateCombinedTextureSamplerDescriptor(*texture_, *sampler_, 0, 0);
         frame.descriptor_set->updateConstantBufferDescriptor(*frame.cbuffer0, 0, sizeof(frame.cb0[0]), 0);
     }
@@ -376,7 +382,8 @@ bool AppMainWindow::initScene() {
         return false;
     }
 
-    if (!(vertex_buffer_ = device_->createBuffer(rel::BufferType::VERTEX, util::as_byte_span(model_.data).size()))) {
+    if (!(vertex_buffer_ = driver_->createBuffer(device_, rel::BufferType::VERTEX,
+                                                 util::as_byte_span(model_.data).size()))) {
         return false;
     }
 

@@ -6,11 +6,9 @@
 
 namespace drasilpp::rel::vulkan {
 
-class Device;
-
-class Sampler final : public util::ref_counter, public ISampler {
+class Sampler final : public ISampler {
  public:
-    explicit Sampler(Device& device);
+    explicit Sampler(std::shared_ptr<Device> device);
     ~Sampler() override;
 
     bool create(const SamplerDesc& desc);
@@ -18,11 +16,10 @@ class Sampler final : public util::ref_counter, public ISampler {
     VkSampler getHandle() { return sampler_; }
 
     //@{ ISampler
-    util::ref_counter& getRefCounter() override { return *this; }
     //@}
 
  private:
-    util::ref_ptr<Device> device_;
+    std::shared_ptr<Device> device_;
     VkSampler sampler_{VK_NULL_HANDLE};
 };
 

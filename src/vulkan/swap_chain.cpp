@@ -6,7 +6,9 @@
 #include "vulkan_logger.h"
 #include "wrappers.h"
 
+#include <algorithm>
 #include <array>
+#include <utility>
 
 using namespace drasilpp;
 using namespace drasilpp::rel;
@@ -15,8 +17,8 @@ using namespace drasilpp::rel::vulkan;
 // --------------------------------------------------------
 // SwapChain class implementation
 
-SwapChain::SwapChain(Device& device, Surface& surface)
-    : device_(util::not_null{&device}), surface_(util::not_null{&surface}) {}
+SwapChain::SwapChain(std::shared_ptr<Device> device, std::shared_ptr<Surface> surface)
+    : device_(std::move(device)), surface_(std::move(surface)) {}
 
 SwapChain::~SwapChain() {
     for (std::uint32_t n = 0; n < std::uint32_t(submit_kits_.size()); ++n) {
@@ -265,18 +267,13 @@ RenderTargetResult SwapChain::submitFrameImage(std::uint32_t image_index, Comman
                                                      {std::array{swap_chain_}, std::array{image_index}});
 }
 
+void SwapChain::setRenderTarget(RenderTarget* render_target) { render_target_ = render_target; }
+
 void SwapChain::removeRenderTarget(RenderTarget* render_target) {
     if (render_target_ == render_target) { render_target_ = nullptr; }
 }
 
 //@{ ISwapChain
-
-util::ref_ptr<IRenderTarget> SwapChain::createRenderTarget(const uxs::db::value& opts) {
-    auto render_target = util::make_new<RenderTarget>(*device_, *this);
-    if (!render_target->create(opts)) { return nullptr; }
-    render_target_ = render_target.get();
-    return std::move(render_target);
-}
 
 //@}
 

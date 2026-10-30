@@ -1,14 +1,13 @@
 #include "pipeline_layout.h"
 
-#include "descriptor_set.h"
 #include "device.h"
-#include "pipeline.h"
-#include "render_target.h"
-#include "shader_module.h"
 #include "tables.h"
 #include "vulkan_logger.h"
 
 #include "rel/tables.h"
+
+#include <algorithm>
+#include <utility>
 
 using namespace drasilpp;
 using namespace drasilpp::rel;
@@ -17,7 +16,7 @@ using namespace drasilpp::rel::vulkan;
 // --------------------------------------------------------
 // PipelineLayout class implementation
 
-PipelineLayout::PipelineLayout(Device& device) : device_(util::not_null(&device)) {}
+PipelineLayout::PipelineLayout(std::shared_ptr<Device> device) : device_(std::move(device)) {}
 
 PipelineLayout::~PipelineLayout() {
     device_->vkDestroyDescriptorPool(desc_pool_, nullptr);
@@ -157,12 +156,6 @@ bool PipelineLayout::obtainDescriptorSet(std::uint32_t set_layout_index, Descrip
 }
 
 //@{ IPipelineLayout
-
-util::ref_ptr<IDescriptorSet> PipelineLayout::createDescriptorSet(std::uint32_t set_layout_index) {
-    auto descriptor_set = util::make_new<DescriptorSet>(*device_, *this);
-    if (!descriptor_set->create(set_layout_index)) { return nullptr; }
-    return std::move(descriptor_set);
-}
 
 void PipelineLayout::resetDescriptorAllocator() { device_->vkResetDescriptorPool(desc_pool_, 0); }
 

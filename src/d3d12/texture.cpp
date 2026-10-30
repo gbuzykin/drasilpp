@@ -2,7 +2,6 @@
 
 #include "d3d12_logger.h"
 #include "device.h"
-#include "render_target.h"
 #include "tables.h"
 
 using namespace drasilpp;
@@ -12,7 +11,7 @@ using namespace drasilpp::rel::d3d12;
 // --------------------------------------------------------
 // Texture class implementation
 
-Texture::Texture(Device& device) : device_(util::not_null{&device}) {}
+Texture::Texture(std::shared_ptr<Device> device) : device_(std::move(device)) {}
 
 Texture::~Texture() {}
 
@@ -75,12 +74,6 @@ bool Texture::updateTexture(const std::uint8_t* data, std::uint32_t first_subres
     return device_->updateTexture(data, allocation_->GetResource(), image_format_, desc_, first_subresource,
                                   update_subresource_descs, D3D12_RESOURCE_STATE_COMMON,
                                   D3D12_RESOURCE_STATE_GENERIC_READ);
-}
-
-util::ref_ptr<IRenderTarget> Texture::createRenderTarget(const uxs::db::value& opts) {
-    auto render_target = util::make_new<RenderTarget>(*device_, *this);
-    if (!render_target->create(opts)) { return nullptr; }
-    return std::move(render_target);
 }
 
 //@}

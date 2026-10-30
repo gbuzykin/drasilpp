@@ -5,6 +5,8 @@
 #include "tables.h"
 #include "vulkan_logger.h"
 
+#include <utility>
+
 using namespace drasilpp;
 using namespace drasilpp::rel;
 using namespace drasilpp::rel::vulkan;
@@ -12,7 +14,7 @@ using namespace drasilpp::rel::vulkan;
 // --------------------------------------------------------
 // Buffer class implementation
 
-Buffer::Buffer(Device& device) : device_(util::not_null{&device}) {}
+Buffer::Buffer(std::shared_ptr<Device> device) : device_(std::move(device)) {}
 
 Buffer::~Buffer() { vmaDestroyBuffer(device_->getAllocator(), buffer_, allocation_); }
 

@@ -9,14 +9,9 @@
 
 namespace drasilpp::rel::d3d12 {
 
-class Device;
-class FrameImageProvider;
-class Pipeline;
-class PipelineLayout;
-
-class RenderTarget final : public util::ref_counter, public IRenderTarget {
+class RenderTarget final : public IRenderTarget {
  public:
-    RenderTarget(Device& device, FrameImageProvider& image_provider);
+    RenderTarget(std::shared_ptr<Device> device, std::shared_ptr<FrameImageProvider> image_provider);
     ~RenderTarget() override;
 
     bool useDepth() const { return use_depth_; }
@@ -28,7 +23,6 @@ class RenderTarget final : public util::ref_counter, public IRenderTarget {
     void destroyFrameResources();
 
     //@{ IRenderTarget
-    util::ref_counter& getRefCounter() override { return *this; }
     Extent2u getImageExtent() const override { return image_extent_; }
     std::uint32_t getFifCount() const override { return std::uint32_t(frame_render_kits_.size()); }
     bool isInvertedNdcY() const override { return false; }
@@ -48,8 +42,8 @@ class RenderTarget final : public util::ref_counter, public IRenderTarget {
     //@}
 
  private:
-    util::ref_ptr<Device> device_;
-    util::ref_ptr<FrameImageProvider> frame_image_provider_;
+    std::shared_ptr<Device> device_;
+    std::shared_ptr<FrameImageProvider> frame_image_provider_;
     bool use_depth_ = false;
     Extent2u image_extent_{};
     DXGI_FORMAT image_format_{};

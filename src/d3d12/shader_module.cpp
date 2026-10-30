@@ -9,7 +9,7 @@ using namespace drasilpp::rel::d3d12;
 // --------------------------------------------------------
 // ShaderModule class implementation
 
-ShaderModule::ShaderModule(Device& device) : device_(util::not_null{&device}) {}
+ShaderModule::ShaderModule(std::shared_ptr<Device> device) : device_(std::move(device)) {}
 
 ShaderModule::~ShaderModule() {}
 

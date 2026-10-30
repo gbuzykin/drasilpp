@@ -4,11 +4,9 @@
 
 namespace drasilpp::rel::vulkan {
 
-class Device;
-
 class Texture final : public FrameImageProvider, public ITexture {
  public:
-    explicit Texture(Device& device);
+    explicit Texture(std::shared_ptr<Device> device);
     ~Texture() override;
 
     bool create(const TextureDesc& desc);
@@ -30,18 +28,17 @@ class Texture final : public FrameImageProvider, public ITexture {
     RenderTargetResult acquireFrameImage(std::uint64_t timeout, std::uint32_t& image_index) override;
     RenderTargetResult submitFrameImage(std::uint32_t image_index, CommandBuffer& command_buffer,
                                         VkFence fence) override;
+    void setRenderTarget(RenderTarget* render_target) override {}
     void removeRenderTarget(RenderTarget* render_target) override {}
     //@}
 
     //@{ ITexture
-    util::ref_counter& getRefCounter() override { return *this; }
     bool updateTexture(const std::uint8_t* data, std::uint32_t first_subresource,
                        std::span<const UpdateTextureDesc> update_subresource_descs) override;
-    util::ref_ptr<IRenderTarget> createRenderTarget(const uxs::db::value& opts) override;
     //@}
 
  private:
-    util::ref_ptr<Device> device_;
+    std::shared_ptr<Device> device_;
     Format image_format_{};
     Extent3u image_extent_{};
     VkPipelineStageFlags image_usage_{};

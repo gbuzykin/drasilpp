@@ -6,11 +6,9 @@
 
 namespace drasilpp::rel::vulkan {
 
-class Device;
-
-class Buffer : public util::ref_counter, public IBuffer {
+class Buffer : public IBuffer {
  public:
-    explicit Buffer(Device& device);
+    explicit Buffer(std::shared_ptr<Device> device);
     ~Buffer() override;
 
     VkDeviceSize getSize() const { return size_; }
@@ -21,12 +19,11 @@ class Buffer : public util::ref_counter, public IBuffer {
     VkBuffer getHandle() { return buffer_; }
 
     //@{ IBuffer
-    util::ref_counter& getRefCounter() override { return *this; }
     bool updateBuffer(std::span<const std::uint8_t> data, std::uint64_t offset) override;
     //@}
 
  private:
-    util::ref_ptr<Device> device_;
+    std::shared_ptr<Device> device_;
     BufferType type_{};
     VkDeviceSize size_ = 0;
     VkDeviceSize alignment_ = 1;

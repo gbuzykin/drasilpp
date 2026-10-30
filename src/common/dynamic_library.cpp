@@ -2,12 +2,12 @@
 
 #include "common/logger.h"
 
-#include <uxs/string_util.h>
+#include <uxs/string_utf.h>
 
 #include <string>
 
 #if defined(WIN32)
-#    include <windows.h>  // NOLINT
+#    include <windows.h>
 #elif defined(__linux__)
 #    include <dlfcn.h>
 #endif

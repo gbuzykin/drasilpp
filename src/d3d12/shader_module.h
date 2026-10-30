@@ -4,13 +4,13 @@
 
 #include "interfaces/i_rendering_driver.h"
 
+#include <utility>
+
 namespace drasilpp::rel::d3d12 {
 
-class Device;
-
-class ShaderModule final : public util::ref_counter, public IShaderModule {
+class ShaderModule final : public IShaderModule {
  public:
-    explicit ShaderModule(Device& device);
+    explicit ShaderModule(std::shared_ptr<Device> device);
     ~ShaderModule() override;
 
     const DataBlob& getBytecode() const { return bytecode_; }
@@ -21,11 +21,10 @@ class ShaderModule final : public util::ref_counter, public IShaderModule {
     }
 
     //@{ IShaderModule
-    util::ref_counter& getRefCounter() override { return *this; }
     //@}
 
  private:
-    util::ref_ptr<Device> device_;
+    std::shared_ptr<Device> device_;
     DataBlob bytecode_;
 };
 

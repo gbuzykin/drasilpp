@@ -6,9 +6,6 @@
 
 namespace drasilpp::rel::d3d12 {
 
-class Device;
-class DevQueue;
-
 class Fence {
  public:
     Fence() = default;

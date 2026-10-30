@@ -1,11 +1,11 @@
 #pragma once
 
 #define VK_NO_PROTOTYPES
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.h>  // NOLINT
 
 #define VMA_STATIC_VULKAN_FUNCTIONS  0
 #define VMA_DYNAMIC_VULKAN_FUNCTIONS 1
-#include <vk_mem_alloc.h>
+#include <vk_mem_alloc.h>  // NOLINT
 
 #ifdef min
 #    undef min
@@ -37,5 +37,22 @@ struct DeviceVkFuncTable {
 #define DEVICE_LEVEL_VK_FUNCTION_FROM_EXTENSION_CMD(name, extension)   PFN_##name name;
 #include "vulkan_function_list.inl"
 };
+
+class Buffer;
+class CommandBuffer;
+class DescriptorSet;
+class DevQueue;
+class Device;
+class FrameImageProvider;
+class PhysicalDevice;
+class PipelineLayout;
+class Pipeline;
+class RenderTarget;
+class RenderingDriver;
+class Sampler;
+class ShaderModule;
+class Surface;
+class SwapChain;
+class Texture;
 
 }  // namespace drasilpp::rel::vulkan

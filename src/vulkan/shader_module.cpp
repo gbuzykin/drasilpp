@@ -3,6 +3,8 @@
 #include "device.h"
 #include "vulkan_logger.h"
 
+#include <utility>
+
 using namespace drasilpp;
 using namespace drasilpp::rel;
 using namespace drasilpp::rel::vulkan;
@@ -10,7 +12,7 @@ using namespace drasilpp::rel::vulkan;
 // --------------------------------------------------------
 // ShaderModule class implementation
 
-ShaderModule::ShaderModule(Device& device) : device_(util::not_null{&device}) {}
+ShaderModule::ShaderModule(std::shared_ptr<Device> device) : device_(std::move(device)) {}
 
 ShaderModule::~ShaderModule() { device_->vkDestroyShaderModule(shader_module_, nullptr); }
 

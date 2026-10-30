@@ -6,11 +6,9 @@
 
 namespace drasilpp::rel::vulkan {
 
-class Device;
-
-class ShaderModule final : public util::ref_counter, public IShaderModule {
+class ShaderModule final : public IShaderModule {
  public:
-    explicit ShaderModule(Device& device);
+    explicit ShaderModule(std::shared_ptr<Device> device);
     ~ShaderModule() override;
 
     bool create(const DataBlob& bytecode);
@@ -18,11 +16,10 @@ class ShaderModule final : public util::ref_counter, public IShaderModule {
     VkShaderModule getHandle() { return shader_module_; }
 
     //@{ IShaderModule
-    util::ref_counter& getRefCounter() override { return *this; }
     //@}
 
  private:
-    util::ref_ptr<Device> device_;
+    std::shared_ptr<Device> device_;
     VkShaderModule shader_module_{VK_NULL_HANDLE};
 };
 

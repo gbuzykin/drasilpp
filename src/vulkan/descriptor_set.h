@@ -4,11 +4,9 @@
 
 namespace drasilpp::rel::vulkan {
 
-class Device;
-
-class DescriptorSet final : public util::ref_counter, public IDescriptorSet {
+class DescriptorSet final : public IDescriptorSet {
  public:
-    DescriptorSet(Device& device, PipelineLayout& pipeline_layout);
+    DescriptorSet(std::shared_ptr<Device> device, std::shared_ptr<PipelineLayout> pipeline_layout);
     ~DescriptorSet() override;
 
     bool create(std::uint32_t set_layout_index) {
@@ -19,7 +17,6 @@ class DescriptorSet final : public util::ref_counter, public IDescriptorSet {
     PipelineLayout& getLayout() { return *pipeline_layout_; }
 
     //@{ IDescriptorSet
-    util::ref_counter& getRefCounter() override { return *this; }
     void updateSamplerDescriptor(ISampler&, std::uint32_t slot) override;
     void updateCombinedTextureSamplerDescriptor(ITexture& texture, ISampler& sampler, std::uint32_t slot,
                                                 std::uint32_t sampler_slot) override;
@@ -29,8 +26,8 @@ class DescriptorSet final : public util::ref_counter, public IDescriptorSet {
     //@}
 
  private:
-    util::ref_ptr<Device> device_;
-    util::ref_ptr<PipelineLayout> pipeline_layout_;
+    std::shared_ptr<Device> device_;
+    std::shared_ptr<PipelineLayout> pipeline_layout_;
     PipelineLayout::DescriptorSetHandle handle_{};
 
     void writeImageDescriptorSet(PipelineLayout::Binding binding, std::span<const VkDescriptorImageInfo> image_infos);

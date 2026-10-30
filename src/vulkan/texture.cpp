@@ -1,10 +1,11 @@
 #include "texture.h"
 
 #include "device.h"
-#include "render_target.h"
 #include "rendering_driver.h"
 #include "tables.h"
 #include "vulkan_logger.h"
+
+#include <utility>
 
 using namespace drasilpp;
 using namespace drasilpp::rel;
@@ -13,7 +14,7 @@ using namespace drasilpp::rel::vulkan;
 // --------------------------------------------------------
 // Texture class implementation
 
-Texture::Texture(Device& device) : device_(util::not_null{&device}) {}
+Texture::Texture(std::shared_ptr<Device> device) : device_(std::move(device)) {}
 
 Texture::~Texture() {
     device_->vkDestroyImageView(image_view_, nullptr);
@@ -125,12 +126,6 @@ bool Texture::updateTexture(const std::uint8_t* data, std::uint32_t first_subres
                                 VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
                                 VK_ACCESS_NONE, VK_ACCESS_SHADER_READ_BIT, VK_IMAGE_LAYOUT_UNDEFINED,
                                 VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, {});
-}
-
-util::ref_ptr<IRenderTarget> Texture::createRenderTarget(const uxs::db::value& opts) {
-    auto render_target = util::make_new<RenderTarget>(*device_, *this);
-    if (!render_target->create(opts)) { return nullptr; }
-    return std::move(render_target);
 }
 
 //@}

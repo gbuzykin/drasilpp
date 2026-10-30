@@ -2,7 +2,7 @@
 
 #include "common/logger.h"
 
-#include <uxs/string_util.h>
+#include <uxs/string_utf.h>
 
 #include <windows.h>
 #include <windowsx.h>

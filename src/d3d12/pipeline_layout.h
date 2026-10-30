@@ -3,6 +3,7 @@
 #include "d3d12_api.h"
 
 #include "interfaces/i_rendering_driver.h"
+#include "util/ref_ptr.h"
 
 #include <uxs/dynarray.h>
 
@@ -10,12 +11,9 @@
 
 namespace drasilpp::rel::d3d12 {
 
-class Device;
-class DescriptorSet;
-
-class PipelineLayout : public util::ref_counter, public IPipelineLayout {
+class PipelineLayout : public IPipelineLayout {
  public:
-    explicit PipelineLayout(Device& device);
+    explicit PipelineLayout(std::shared_ptr<Device> device);
     ~PipelineLayout();
 
     enum class HeapType { CBV_SRV_UAV = 0, SAMPLER, TOTAL_COUNT };
@@ -86,13 +84,11 @@ class PipelineLayout : public util::ref_counter, public IPipelineLayout {
     ID3D12RootSignature* getD3D12RootSignature() { return root_signature_.get(); }
 
     //@{ IPipelineLayout
-    util::ref_counter& getRefCounter() override { return *this; }
-    util::ref_ptr<IDescriptorSet> createDescriptorSet(std::uint32_t set_layout_index) override;
     void resetDescriptorAllocator() override;
     //@}
 
  private:
-    util::ref_ptr<Device> device_;
+    std::shared_ptr<Device> device_;
     util::ref_ptr<ID3D12RootSignature> root_signature_;
 
     struct DescriptorHeap {

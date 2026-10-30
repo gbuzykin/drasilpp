@@ -8,8 +8,6 @@
 
 namespace drasilpp::rel::d3d12 {
 
-class Device;
-
 class DevQueue {
  public:
     DevQueue() = default;

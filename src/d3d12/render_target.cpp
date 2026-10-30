@@ -4,8 +4,8 @@
 #include "d3d12_logger.h"
 #include "descriptor_set.h"
 #include "device.h"
+#include "frame_image_provider.h"
 #include "pipeline.h"
-#include "swap_chain.h"
 #include "tables.h"
 #include "wrappers.h"
 
@@ -16,8 +16,10 @@ using namespace drasilpp::rel::d3d12;
 // --------------------------------------------------------
 // RenderTarget class implementation
 
-RenderTarget::RenderTarget(Device& device, FrameImageProvider& image_provider)
-    : device_(util::not_null{&device}), frame_image_provider_(util::not_null{&image_provider}) {}
+RenderTarget::RenderTarget(std::shared_ptr<Device> device, std::shared_ptr<FrameImageProvider> image_provider)
+    : device_(std::move(device)), frame_image_provider_(std::move(image_provider)) {
+    frame_image_provider_->setRenderTarget(this);
+}
 
 RenderTarget::~RenderTarget() {
     destroyFrameResources();

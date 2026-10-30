@@ -1,8 +1,9 @@
 #pragma once
 
-#include "not_null.h"
-
+#include <concepts>
+#include <cstddef>
 #include <type_traits>
+#include <utility>
 
 // NOLINTBEGIN(readability-identifier-naming*)
 
@@ -24,12 +25,6 @@ class ref_ptr {
         requires std::convertible_to<U*, T*>
     ref_ptr(U* p) noexcept : p_(p) {
         if (p) { ref_inc<T>{}(*p); }
-    }
-
-    template<typename U>
-        requires std::convertible_to<U, T*>
-    ref_ptr(const not_null<U>& p) noexcept(std::is_nothrow_convertible_v<U, T*>) : p_(p.get()) {
-        ref_inc<T>{}(*p);
     }
 
     ref_ptr(const ref_ptr& p) noexcept : p_(p.get()) {
@@ -76,12 +71,6 @@ class ref_ptr {
         ref_ptr<T>(p).swap(*this);
     }
 
-    template<typename U>
-        requires std::convertible_to<U, T*>
-    void reset(const not_null<U>& p) noexcept(std::is_nothrow_convertible_v<U, T*>) {
-        ref_ptr<T>(p).swap(*this);
-    }
-
     ref_ptr& operator=(std::nullptr_t) noexcept {
         ref_ptr<T>().swap(*this);
         return *this;
@@ -90,13 +79,6 @@ class ref_ptr {
     template<typename U>
         requires std::convertible_to<U*, T*>
     ref_ptr& operator=(U* p) noexcept {
-        ref_ptr<T>(p).swap(*this);
-        return *this;
-    }
-
-    template<typename U>
-        requires std::convertible_to<U, T*>
-    ref_ptr& operator=(const not_null<U>& p) noexcept(std::is_nothrow_convertible_v<U, T*>) {
         ref_ptr<T>(p).swap(*this);
         return *this;
     }
@@ -134,52 +116,18 @@ class ref_ptr {
 template<typename T>
 ref_ptr(T p) -> ref_ptr<std::remove_cvref_t<decltype(*p)>>;
 
-template<typename T, typename... Args>
-ref_ptr<T> make_new(Args&&... args) {
-    return not_null{::new T(std::forward<Args>(args)...)};
-}
+template<typename T>
+concept has_addref_method = requires(T p) { p.AddRef(); };
 
 template<typename T>
-concept has_ref_unref_methods = requires(T p) {
-    p.ref();
-    p.unref();
-};
+concept has_release_method = requires(T p) { p.Release(); };
 
-template<has_ref_unref_methods T>
-struct ref_inc<T> {
-    void operator()(T& p) const { p.ref(); }
-};
-
-template<has_ref_unref_methods T>
-struct ref_dec<T> {
-    void operator()(T& p) const { p.unref(); }
-};
-
-template<typename T>
-concept has_get_ref_counter_method = !has_ref_unref_methods<T> && requires(T p) { p.getRefCounter(); };
-
-template<has_get_ref_counter_method T>
-struct ref_inc<T> {
-    void operator()(T& p) const { p.getRefCounter().ref(); }
-};
-
-template<has_get_ref_counter_method T>
-struct ref_dec<T> {
-    void operator()(T& p) const { p.getRefCounter().unref(); }
-};
-
-template<typename T>
-concept has_addref_release_methods = requires(T p) {
-    p.AddRef();
-    p.Release();
-};
-
-template<has_addref_release_methods T>
+template<has_addref_method T>
 struct ref_inc<T> {
     void operator()(T& p) const { p.AddRef(); }
 };
 
-template<has_addref_release_methods T>
+template<has_release_method T>
 struct ref_dec<T> {
     void operator()(T& p) const { p.Release(); }
 };
