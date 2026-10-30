@@ -27,10 +27,9 @@ class HlslCompiler::Implementation {
  public:
     ~Implementation();
 
-    DataBlob compileShader(const DataBlob& source_text, const uxs::db::basic_value<wchar_t>& args,
-                           DataBlob& compiler_output);
+    DataBlob compileShader(const DataBlob& source_text, const uxs::db::wvalue& args, DataBlob& compiler_output);
 
-    void setPlatformArgs(uxs::db::basic_value<wchar_t> platform_args) { platform_args_ = std::move(platform_args); }
+    void setPlatformArgs(uxs::db::wvalue platform_args) { platform_args_ = std::move(platform_args); }
 
  private:
     static std::atomic<bool> is_initialized_;
@@ -40,7 +39,7 @@ class HlslCompiler::Implementation {
     util::ref_ptr<IDxcUtils> dxc_utils_;
     util::ref_ptr<IDxcCompiler3> dxc_compiler_;
     util::ref_ptr<IDxcIncludeHandler> include_handler_;
-    uxs::db::basic_value<wchar_t> platform_args_;
+    uxs::db::wvalue platform_args_;
 
     bool init();
 };
@@ -89,8 +88,7 @@ bool HlslCompiler::Implementation::init() {
     return true;
 }
 
-DataBlob HlslCompiler::Implementation::compileShader(const DataBlob& source_text,
-                                                     const uxs::db::basic_value<wchar_t>& args,
+DataBlob HlslCompiler::Implementation::compileShader(const DataBlob& source_text, const uxs::db::wvalue& args,
                                                      DataBlob& compiler_output) {
     if (!is_initialized_) {
         if (!init()) { return {}; }
@@ -144,7 +142,7 @@ DataBlob HlslCompiler::Implementation::compileShader(const DataBlob& source_text
     HRESULT status = S_OK;
     results->GetStatus(&status);
     if (FAILED(status)) {
-        logError("shader '{}' compilation error: {:#010x}", uxs::utf8_string_adapter{}(filename), status);
+        logError("shader '{}' compilation error: {:#010x}", filename, status);
         return {};
     }
 
@@ -168,20 +166,32 @@ HlslCompiler::HlslCompiler() : impl_(std::make_unique<Implementation>()) {}
 HlslCompiler::~HlslCompiler() {}
 
 namespace {
-uxs::db::basic_value<wchar_t> uft8ToWideUtfDbValue(const uxs::db::value& v) {
-    return v.visit([](auto x) -> uxs::db::basic_value<wchar_t> {
-        uxs::db::basic_value<wchar_t> result;
-        if constexpr (std::is_same_v<decltype(x), decltype(v.as_string_view())>) {
-            return std::wstring_view(uxs::wide_string_adapter{}(x));
-        } else if constexpr (std::is_same_v<decltype(x), decltype(v.as_array())>) {
-            result.reserve(uxs::db::array_tag, x.size());
-            for (const auto& el : x) { result.emplace_back(uft8ToWideUtfDbValue(el)); }
-        } else if constexpr (std::is_same_v<decltype(x), decltype(v.as_record())>) {
-            result.reserve(uxs::db::record_tag, x.size());
-            for (const auto& [key, value] : x) {
-                result.emplace(uxs::wide_string_adapter{}(key), uft8ToWideUtfDbValue(value));
+uxs::db::wvalue uft8ToWideDbValue(const uxs::db::value& v) {
+    return v.visit([](auto tag, const auto& x) -> uxs::db::wvalue {
+        uxs::db::wvalue result;
+        if constexpr (std::is_same_v<decltype(tag), uxs::db::string_tag_t>) {
+            const auto sv = x.as_string_view();
+            return {uxs::db::string_tag, uxs::utf_string_adapter<wchar_t>{}.count(sv.begin(), sv.end()), [sv](auto s) {
+                        uxs::utf_string_adapter<wchar_t>{}.transform(sv.begin(), sv.end(), s.data());
+                        return s.size();
+                    }};
+        } else if constexpr (std::is_same_v<decltype(tag), uxs::db::array_tag_t>) {
+            const auto r = x.as_array();
+            result.reserve(uxs::db::array_tag, r.size());
+            for (const auto& el : r) { result.push_back(uft8ToWideDbValue(el)); }
+        } else if constexpr (std::is_same_v<decltype(tag), uxs::db::object_tag_t>) {
+            const auto r = x.as_object();
+            result.reserve(uxs::db::object_tag, r.size());
+            for (const auto& [key, value] : r) {
+                result.append_new(uxs::db::wvalue::make_node(
+                    x.get_allocator(), uxs::utf_string_adapter<wchar_t>{}.count(key.begin(), key.end()),
+                    [key](auto s) {
+                        uxs::utf_string_adapter<wchar_t>{}.transform(key.begin(), key.end(), s.data());
+                        return s.size();
+                    },
+                    uft8ToWideDbValue(value)));
             }
-        } else if constexpr (!std::is_same_v<decltype(x), std::nullptr_t>) {
+        } else if constexpr (!std::is_same_v<decltype(tag), uxs::db::null_tag_t>) {
             return x;
         }
         return result;
@@ -191,9 +201,9 @@ uxs::db::basic_value<wchar_t> uft8ToWideUtfDbValue(const uxs::db::value& v) {
 
 DataBlob HlslCompiler::compileShader(const DataBlob& source_text, const uxs::db::value& args,
                                      DataBlob& compiler_output) {
-    return impl_->compileShader(source_text, uft8ToWideUtfDbValue(args), compiler_output);
+    return impl_->compileShader(source_text, uft8ToWideDbValue(args), compiler_output);
 }
 
 void HlslCompiler::setPlatformArgs(const uxs::db::value& platform_args) {
-    impl_->setPlatformArgs(uft8ToWideUtfDbValue(platform_args));
+    impl_->setPlatformArgs(uft8ToWideDbValue(platform_args));
 }

@@ -25,7 +25,7 @@ struct uxs::formatter<VkResult, CharT> {
         if (!text.empty()) {
             ctx.out() += text;
         } else {
-            to_basic_string(ctx.out(), int(val));
+            to_string_append(ctx.out(), int(val));
         }
     }
 };

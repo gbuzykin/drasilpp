@@ -9,6 +9,8 @@
 
 #include "rel/tables.h"
 
+#include <stdexcept>
+
 using namespace drasilpp;
 using namespace drasilpp::rel;
 using namespace drasilpp::rel::d3d12;
@@ -92,7 +94,7 @@ bool Pipeline::create(std::span<IShaderModule* const> shader_modules, const uxs:
     for (const auto& module : shader_stages.as_array()) {
         const std::uint32_t index = module.value_or<std::uint32_t>("module_index", def_module_index);
         def_module_index = index + 1;
-        if (index >= shader_modules.size()) { throw uxs::db::database_error("shader module index out of range"); }
+        if (index >= shader_modules.size()) { throw std::runtime_error("shader module index out of range"); }
         const auto& bytecode = static_cast<ShaderModule&>(*shader_modules[index]).getBytecode();
         const D3D12_SHADER_BYTECODE bytecode_desc{
             .pShaderBytecode = bytecode.getData(),

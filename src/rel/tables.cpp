@@ -1,7 +1,6 @@
 #include "rel/tables.h"
 
-#include <uxs/db/database_error.h>
-
+#include <stdexcept>
 #include <unordered_map>
 
 using namespace drasilpp::rel;
@@ -43,24 +42,24 @@ const std::unordered_map<std::string_view, DescriptorType> g_descriptor_types{
 
 Format drasilpp::rel::parseFormat(std::string_view fmt) {
     auto it = g_formats.find(fmt);
-    if (it != g_formats.end()) { return it->second; }
-    throw uxs::db::database_error("unknown format");
+    if (it == g_formats.end()) { throw std::runtime_error("unknown format"); }
+    return it->second;
 }
 
 ShaderStage drasilpp::rel::parseShaderStage(std::string_view stage) {
     auto it = g_shader_stages.find(stage);
-    if (it != g_shader_stages.end()) { return it->second; }
-    throw uxs::db::database_error("unknown shader stage");
+    if (it == g_shader_stages.end()) { throw std::runtime_error("unknown shader stage"); }
+    return it->second;
 }
 
 PrimitiveTopology drasilpp::rel::parsePrimitiveTopology(std::string_view topology) {
     auto it = g_primitive_topologies.find(topology);
-    if (it != g_primitive_topologies.end()) { return it->second; }
-    throw uxs::db::database_error("unknown primitive topology");
+    if (it == g_primitive_topologies.end()) { throw std::runtime_error("unknown primitive topology"); }
+    return it->second;
 }
 
 DescriptorType drasilpp::rel::parseDescriptorType(std::string_view type) {
     auto it = g_descriptor_types.find(type);
-    if (it != g_descriptor_types.end()) { return it->second; }
-    throw uxs::db::database_error("unknown descriptor type");
+    if (it == g_descriptor_types.end()) { throw std::runtime_error("unknown descriptor type"); }
+    return it->second;
 }

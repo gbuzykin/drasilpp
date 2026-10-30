@@ -112,7 +112,7 @@ bool Device::create(const uxs::db::value& caps) {
         return false;
     }
 
-    const std::array priority{1.0f};
+    const std::array priority{1.0F};
     add_queue_family(graphics_queue_.getFamilyIndex(), priority);
 
     if (caps.value<bool>("needs_compute")) {
@@ -243,7 +243,7 @@ bool Device::createSemaphore(VkSemaphore& semaphore) {
 bool Device::createFence(bool signaled, VkFence& fence) {
     VkResult result = vkCreateFence(constAddressOf(VkFenceCreateInfo{
                                         .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-                                        .flags = signaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0u,
+                                        .flags = signaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0U,
                                     }),
                                     nullptr, &fence);
     if (result != VK_SUCCESS) {
