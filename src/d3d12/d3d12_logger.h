@@ -35,8 +35,8 @@ struct uxs::formatter<drasilpp::rel::d3d12::D3D12Result, CharT> {
         if (!text.empty()) {
             ctx.out() += text;
         } else {
-            to_basic_string(ctx.out(), std::uint32_t(val.result),
-                            fmt_opts(fmt_flags::hex | fmt_flags::leading_zeroes | fmt_flags::alternate, -1, 10));
+            to_string_append(ctx.out(), std::uint32_t(val.result),
+                             fmt_opts(fmt_flags::hex | fmt_flags::leading_zeroes | fmt_flags::alternate, -1, 10));
         }
     }
 };

@@ -5,9 +5,9 @@
 namespace drasilpp::rel {
 
 struct Camera {
-    Vec3f eye{0.f, 0.f, 4.f};
-    Vec3f center{0.f, 0.f, 0.f};
-    Vec3f up{0.f, 1.f, 0.f};
+    Vec3f eye{0.F, 0.F, 4.F};
+    Vec3f center{0.F, 0.F, 0.F};
+    Vec3f up{0.F, 1.F, 0.F};
 };
 
 class OrbitCameraManipulator {
@@ -41,7 +41,7 @@ class OrbitCameraManipulator {
                 const float l = length(rot_axis);
                 const float a = l / (length(v0) * length(v1));
                 const auto rotation = a >= 0.001 ?
-                                          Mat4f::rotate(ROTATION_SENSITIVITY * std::asin(a), (1.f / l) * rot_axis) :
+                                          Mat4f::rotate(ROTATION_SENSITIVITY * std::asin(a), (1.F / l) * rot_axis) :
                                           Mat4f::identity();
 
                 camera_.eye = camera_.center + back0_ * rotation;
@@ -61,8 +61,8 @@ class OrbitCameraManipulator {
  private:
     Camera& camera_;
 
-    static constexpr float MOVE_SENSITIVITY = 5.f;
-    static constexpr float ROTATION_SENSITIVITY = 200.f;
+    static constexpr float MOVE_SENSITIVITY = 5.F;
+    static constexpr float ROTATION_SENSITIVITY = 200.F;
 
     DragAction drag_action_{DragAction::NONE};
     Vec2f p0_{};

@@ -9,6 +9,8 @@
 
 #include "rel/tables.h"
 
+#include <stdexcept>
+
 using namespace drasilpp;
 using namespace drasilpp::rel;
 using namespace drasilpp::rel::vulkan;
@@ -33,7 +35,7 @@ bool Pipeline::create(std::span<IShaderModule* const> shader_modules, const uxs:
     std::uint32_t def_module_index = 0;
     for (const auto& module : shader_stages.as_array()) {
         const std::uint32_t index = module.value_or<std::uint32_t>("module_index", def_module_index++);
-        if (index >= shader_modules.size()) { throw uxs::db::database_error("shader module index out of range"); }
+        if (index >= shader_modules.size()) { throw std::runtime_error("shader module index out of range"); }
         const auto shader_stage = parseShaderStage(module.value("stage").as_string_view());
         shader_stage_create_infos.emplace_back(VkPipelineShaderStageCreateInfo{
             .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
@@ -120,17 +122,17 @@ bool Pipeline::create(std::span<IShaderModule* const> shader_modules, const uxs:
         .cullMode = VK_CULL_MODE_BACK_BIT,
         .frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE,
         .depthBiasEnable = VK_FALSE,
-        .depthBiasConstantFactor = 0.0f,
-        .depthBiasClamp = 0.0f,
-        .depthBiasSlopeFactor = 0.0f,
-        .lineWidth = 1.0f,
+        .depthBiasConstantFactor = 0.0F,
+        .depthBiasClamp = 0.0F,
+        .depthBiasSlopeFactor = 0.0F,
+        .lineWidth = 1.0F,
     };
 
     const VkPipelineMultisampleStateCreateInfo multisample_state_create_info{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
         .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
         .sampleShadingEnable = VK_FALSE,
-        .minSampleShading = 0.0f,
+        .minSampleShading = 0.0F,
         .alphaToCoverageEnable = VK_FALSE,
         .alphaToOneEnable = VK_FALSE,
     };
@@ -142,8 +144,8 @@ bool Pipeline::create(std::span<IShaderModule* const> shader_modules, const uxs:
         .depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL,
         .depthBoundsTestEnable = VK_FALSE,
         .stencilTestEnable = VK_FALSE,
-        .minDepthBounds = 0.0f,
-        .maxDepthBounds = 1.0f,
+        .minDepthBounds = 0.0F,
+        .maxDepthBounds = 1.0F,
     };
 
     const std::array attachment_blend_states{
@@ -165,7 +167,7 @@ bool Pipeline::create(std::span<IShaderModule* const> shader_modules, const uxs:
         .logicOp = VK_LOGIC_OP_COPY,
         .attachmentCount = std::uint32_t(attachment_blend_states.size()),
         .pAttachments = attachment_blend_states.data(),
-        .blendConstants = {1.0f, 1.0f, 1.0f, 1.0f},
+        .blendConstants = {1.0F, 1.0F, 1.0F, 1.0F},
     };
 
     uxs::inline_dynarray<VkDynamicState> dynamic_states;

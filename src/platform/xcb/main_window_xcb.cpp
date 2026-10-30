@@ -278,7 +278,7 @@ int MainWindow::Implementation::mainLoop() {
                         CALL_AND_CHECK_RESULT(
                             onMouseButtonEvent(static_cast<KeyCode>(ev->detail), true, ev->event_x, ev->event_y));
                     } else if (ev->detail == 4 || ev->detail == 5) {
-                        CALL_AND_CHECK_RESULT(onMouseWheel(ev->detail == 4 ? 0.24f : -0.24f, ev->event_x, ev->event_y,
+                        CALL_AND_CHECK_RESULT(onMouseWheel(ev->detail == 4 ? 0.24F : -0.24F, ev->event_x, ev->event_y,
                                                            get_mouse_button_mask(ev->state)));
                     }
                 } break;

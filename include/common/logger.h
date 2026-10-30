@@ -19,21 +19,21 @@ DRASILPP_COMMON_EXPORT void vprint(LogLevel level, std::string_view fmt, uxs::fo
 
 template<typename... Args>
 void logError(uxs::format_string<Args...> fmt, const Args&... args) {
-    detail::vprint(LogLevel::PR_ERROR, fmt.get(), uxs::make_format_args(args...));
+    detail::vprint(LogLevel::PR_ERROR, fmt.get(), uxs::format_args::make(args...));
 }
 template<typename... Args>
 void logWarning(uxs::format_string<Args...> fmt, const Args&... args) {
-    detail::vprint(LogLevel::PR_WARNING, fmt.get(), uxs::make_format_args(args...));
+    detail::vprint(LogLevel::PR_WARNING, fmt.get(), uxs::format_args::make(args...));
 }
 template<typename... Args>
 void logInfo(uxs::format_string<Args...> fmt, const Args&... args) {
-    detail::vprint(LogLevel::PR_INFO, fmt.get(), uxs::make_format_args(args...));
+    detail::vprint(LogLevel::PR_INFO, fmt.get(), uxs::format_args::make(args...));
 }
 
 #if !defined(NDEBUG)
 template<unsigned Level = 0, typename... Args>
 void logDebug(uxs::format_string<Args...> fmt, const Args&... args) {
-    detail::vprint(LogLevel{unsigned(LogLevel::PR_DEBUG) + Level}, fmt.get(), uxs::make_format_args(args...));
+    detail::vprint(LogLevel{unsigned(LogLevel::PR_DEBUG) + Level}, fmt.get(), uxs::format_args::make(args...));
 }
 #else
 template<unsigned Level = 0, typename... Dummy>
