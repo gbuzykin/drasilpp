@@ -6,6 +6,8 @@
 
 #include <uxs/db/value.h>
 
+#include <optional>
+
 #if defined(WIN32)
 #    define DRASILPP_ENTRY_EXPORT extern "C" __declspec(dllexport)
 #elif defined(__linux__)
@@ -107,8 +109,8 @@ struct IRenderingDriver {
     virtual std::uint32_t getPhysicalDeviceCount() const = 0;
     virtual const char* getPhysicalDeviceName(std::uint32_t device_index) const = 0;
     virtual bool isSuitablePhysicalDevice(std::uint32_t device_index, const uxs::db::value& caps) const = 0;
-    virtual DataBlob compileShader(const DataBlob& source_text, const uxs::db::value& args,
-                                   DataBlob& compiler_output) = 0;
+    virtual std::optional<DataBlob> compileShader(const DataBlob& source_text, const uxs::db::value& args,
+                                                  DataBlob& compiler_output) = 0;
     virtual std::shared_ptr<ISurface> createSurface(const WindowDescriptor& win_desc) = 0;
     virtual std::shared_ptr<IDevice> createDevice(std::uint32_t device_index, const uxs::db::value& caps) = 0;
     virtual std::shared_ptr<ISwapChain> createSwapChain(const std::shared_ptr<IDevice>& device,

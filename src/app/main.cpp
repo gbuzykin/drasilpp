@@ -271,14 +271,18 @@ std::shared_ptr<rel::IShaderModule> AppMainWindow::compileShaderModule(const cha
 
         rel::DataBlob compiler_output;
         auto shader_binary = driver_->compileShader(shader_text, args, compiler_output);
-        if (shader_binary.isEmpty()) {
+        if (!shader_binary) {
+            logError("couldn't compile shader '{}'", filename);
             logError("{}", compiler_output.getTextView());
             return nullptr;
         }
 
-        if (!compiler_output.isEmpty()) { logWarning("{}", compiler_output.getTextView()); }
+        if (!compiler_output.isEmpty()) {
+            logWarning("shader '{}' compiled with warnings", filename);
+            logWarning("{}", compiler_output.getTextView());
+        }
 
-        return driver_->createShaderModule(device_, std::move(shader_binary));
+        return driver_->createShaderModule(device_, std::move(*shader_binary));
     } else {
         logError("couldn't open '{}' shader file", filename);
     }

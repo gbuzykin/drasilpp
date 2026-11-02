@@ -27,7 +27,7 @@ void* drasilpp::loadDynamicLibrary(const std::filesystem::path& library_dir, std
     if (!library_dir.empty()) {
         library_path = library_dir / library_path;
 #if defined(__linux__)
-        if (!library_dir.is_absolute()) { library_path = "../lib/" / library_path; }
+        if (!library_dir.is_absolute()) { library_path = "../lib" / library_path; }
 #endif
         try {
             library_path = std::filesystem::canonical(library_path);

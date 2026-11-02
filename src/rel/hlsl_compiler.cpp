@@ -28,7 +28,8 @@ class HlslCompiler::Implementation {
  public:
     ~Implementation();
 
-    DataBlob compileShader(const DataBlob& source_text, const uxs::db::wvalue& args, DataBlob& compiler_output);
+    std::optional<DataBlob> compileShader(const DataBlob& source_text, const uxs::db::wvalue& args,
+                                          DataBlob& compiler_output);
 
     void setPlatformArgs(uxs::db::wvalue platform_args) { platform_args_ = std::move(platform_args); }
 
@@ -89,10 +90,11 @@ bool HlslCompiler::Implementation::init() {
     return true;
 }
 
-DataBlob HlslCompiler::Implementation::compileShader(const DataBlob& source_text, const uxs::db::wvalue& args,
-                                                     DataBlob& compiler_output) {
+std::optional<DataBlob> HlslCompiler::Implementation::compileShader(const DataBlob& source_text,
+                                                                    const uxs::db::wvalue& args,
+                                                                    DataBlob& compiler_output) {
     if (!is_initialized_) {
-        if (!init()) { return {}; }
+        if (!init()) { return std::nullopt; }
     }
 
     uxs::inline_dynarray<LPCWSTR, 64> args_array;
@@ -122,13 +124,13 @@ DataBlob HlslCompiler::Implementation::compileShader(const DataBlob& source_text
         .Encoding = DXC_CP_ACP,
     };
 
-    std::unique_lock lk(mtx_);
-
     util::ref_ptr<IDxcResult> results;
-    dxc_compiler_->Compile(&source, args_array.data(), UINT32(args_array.size()), &*include_handler_,
-                           IID_PPV_ARGS(results.reset_and_get_address()));
 
-    lk.unlock();
+    {
+        std::lock_guard lk(mtx_);
+        dxc_compiler_->Compile(&source, args_array.data(), UINT32(args_array.size()), &*include_handler_,
+                               IID_PPV_ARGS(results.reset_and_get_address()));
+    }
 
     util::ref_ptr<IDxcBlobUtf8> errors;
     results->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(errors.reset_and_get_address()), nullptr);
@@ -142,10 +144,7 @@ DataBlob HlslCompiler::Implementation::compileShader(const DataBlob& source_text
 
     HRESULT status = S_OK;
     results->GetStatus(&status);
-    if (FAILED(status)) {
-        logError("shader '{}' compilation error: {:#010x}", filename, status);
-        return {};
-    }
+    if (FAILED(status)) { return std::nullopt; }
 
     util::ref_ptr<IDxcBlob> shader;
     results->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(shader.reset_and_get_address()), nullptr);
@@ -156,7 +155,7 @@ DataBlob HlslCompiler::Implementation::compileShader(const DataBlob& source_text
         return data_blob;
     }
 
-    return {};
+    return DataBlob();
 }
 
 // --------------------------------------------------------
@@ -200,8 +199,8 @@ uxs::db::wvalue uft8ToWideDbValue(const uxs::db::value& v) {
 }
 }  // namespace
 
-DataBlob HlslCompiler::compileShader(const DataBlob& source_text, const uxs::db::value& args,
-                                     DataBlob& compiler_output) {
+std::optional<DataBlob> HlslCompiler::compileShader(const DataBlob& source_text, const uxs::db::value& args,
+                                                    DataBlob& compiler_output) {
     return impl_->compileShader(source_text, uft8ToWideDbValue(args), compiler_output);
 }
 

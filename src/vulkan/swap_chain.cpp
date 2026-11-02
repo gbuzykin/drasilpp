@@ -93,15 +93,15 @@ VkSurfaceFormatKHR SwapChain::chooseImageFormat(std::span<const VkSurfaceFormatK
         formats, [&image_format](const auto& avail) { return avail.format == image_format.format; });
     if (desired_format_it != formats.end()) {
         logWarning(LOG_VK
-                   "desired combination of surface format and colorspace is not supported; "
-                   "selecting other colorspace");
+                   "desired combination of surface format and color space is not supported; "
+                   "selecting other color space");
         image_format.colorSpace = desired_format_it->colorSpace;
         return image_format;
     }
 
     logWarning(LOG_VK
                "desired surface format is not supported; "
-               "selecting available format - colorspace combination");
+               "selecting available format and color space combination");
     return formats[0];
 }
 

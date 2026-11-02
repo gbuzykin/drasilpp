@@ -41,7 +41,8 @@ class RenderingDriver final : public std::enable_shared_from_this<RenderingDrive
     std::uint32_t getPhysicalDeviceCount() const override;
     const char* getPhysicalDeviceName(std::uint32_t device_index) const override;
     bool isSuitablePhysicalDevice(std::uint32_t device_index, const uxs::db::value& caps) const override;
-    DataBlob compileShader(const DataBlob& source_text, const uxs::db::value& args, DataBlob& compiler_output) override;
+    std::optional<DataBlob> compileShader(const DataBlob& source_text, const uxs::db::value& args,
+                                          DataBlob& compiler_output) override;
     std::shared_ptr<ISurface> createSurface(const WindowDescriptor& win_desc) override;
     std::shared_ptr<IDevice> createDevice(std::uint32_t device_index, const uxs::db::value& caps) override;
     std::shared_ptr<ISwapChain> createSwapChain(const std::shared_ptr<IDevice>& device,
