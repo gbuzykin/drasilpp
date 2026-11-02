@@ -4,6 +4,8 @@
 
 #include <uxs/db/value.h>
 
+#include <optional>
+
 namespace drasilpp::rel {
 
 class DRASILPP_REL_EXPORT HlslCompiler {
@@ -11,7 +13,8 @@ class DRASILPP_REL_EXPORT HlslCompiler {
     HlslCompiler();
     ~HlslCompiler();
 
-    DataBlob compileShader(const DataBlob& source_text, const uxs::db::value& args, DataBlob& compiler_output);
+    std::optional<DataBlob> compileShader(const DataBlob& source_text, const uxs::db::value& args,
+                                          DataBlob& compiler_output);
     void setPlatformArgs(const uxs::db::value& platform_args);
 
  private:

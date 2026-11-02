@@ -66,8 +66,8 @@ bool RenderingDriver::isSuitablePhysicalDevice(std::uint32_t device_index, const
     return true;
 }
 
-DataBlob RenderingDriver::compileShader(const DataBlob& source_text, const uxs::db::value& args,
-                                        DataBlob& compiler_output) {
+std::optional<DataBlob> RenderingDriver::compileShader(const DataBlob& source_text, const uxs::db::value& args,
+                                                       DataBlob& compiler_output) {
     return hlsl_compiler_.compileShader(source_text, args, compiler_output);
 }
 
