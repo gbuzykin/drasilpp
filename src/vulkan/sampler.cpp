@@ -1,4 +1,4 @@
-#include "sampler.h"
+#include "sampler.h"  // IWYU pragma: keep
 
 #include "device.h"
 #include "tables.h"

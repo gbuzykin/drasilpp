@@ -1,4 +1,4 @@
-#include "swap_chain.h"
+#include "swap_chain.h"  // IWYU pragma: keep
 
 #include "device.h"
 #include "render_target.h"

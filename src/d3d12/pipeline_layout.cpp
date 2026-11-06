@@ -1,11 +1,10 @@
-#include "pipeline_layout.h"
+#include "pipeline_layout.h"  // IWYU pragma: keep
 
 #include "d3d12_logger.h"
 #include "descriptor_set.h"
 #include "device.h"
 #include "tables.h"
 
-#include "common/core_defs.h"
 #include "rel/tables.h"
 
 #include <algorithm>

@@ -1,4 +1,4 @@
-#include "render_target.h"
+#include "render_target.h"  // IWYU pragma: keep
 
 #include "buffer.h"
 #include "d3d12_logger.h"

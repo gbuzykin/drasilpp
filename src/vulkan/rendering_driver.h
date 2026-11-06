@@ -26,7 +26,7 @@ class RenderingDriver final : public std::enable_shared_from_this<RenderingDrive
         return vk_funcs_.name(instance_, std::forward<Args>(args)...); \
     }
 
-#include "vulkan_function_list.inl"
+#include "vulkan_function_list.inl"  // IWYU pragma: keep
 
     const InstanceVkFuncTable& getVkFuncs() { return vk_funcs_; }
 
@@ -118,7 +118,7 @@ class PhysicalDevice {
         return instance_.getVkFuncs().name(physical_device_, std::forward<Args>(args)...); \
     }
 
-#include "vulkan_function_list.inl"
+#include "vulkan_function_list.inl"  // IWYU pragma: keep
 
  private:
     RenderingDriver& instance_;

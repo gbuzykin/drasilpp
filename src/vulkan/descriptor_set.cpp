@@ -1,4 +1,4 @@
-#include "descriptor_set.h"
+#include "descriptor_set.h"  // IWYU pragma: keep
 
 #include "buffer.h"
 #include "device.h"

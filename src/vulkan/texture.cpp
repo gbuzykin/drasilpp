@@ -1,4 +1,4 @@
-#include "texture.h"
+#include "texture.h"  // IWYU pragma: keep
 
 #include "device.h"
 #include "rendering_driver.h"

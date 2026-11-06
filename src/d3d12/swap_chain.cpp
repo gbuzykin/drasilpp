@@ -1,4 +1,4 @@
-#include "swap_chain.h"
+#include "swap_chain.h"  // IWYU pragma: keep
 
 #include "d3d12_logger.h"
 #include "device.h"

@@ -1,9 +1,7 @@
-#include "dev_queue.h"
+#include "dev_queue.h"  // IWYU pragma: keep
 
 #include "d3d12_logger.h"
 #include "device.h"
-
-#include "common/core_defs.h"
 
 using namespace drasilpp;
 using namespace drasilpp::rel;

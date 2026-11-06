@@ -1,4 +1,4 @@
-#include "texture.h"
+#include "texture.h"  // IWYU pragma: keep
 
 #include "d3d12_logger.h"
 #include "device.h"
