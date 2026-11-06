@@ -2,7 +2,6 @@
 
 #include "fence.h"
 
-#include "common/core_defs.h"
 #include "interfaces/i_rendering_driver.h"
 
 #include <uxs/dynarray.h>

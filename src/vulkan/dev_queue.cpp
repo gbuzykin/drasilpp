@@ -1,4 +1,4 @@
-#include "dev_queue.h"
+#include "dev_queue.h"  // IWYU pragma: keep
 
 #include "device.h"
 #include "vulkan_logger.h"

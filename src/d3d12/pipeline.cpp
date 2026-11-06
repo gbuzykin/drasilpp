@@ -1,4 +1,4 @@
-#include "pipeline.h"
+#include "pipeline.h"  // IWYU pragma: keep
 
 #include "d3d12_logger.h"
 #include "device.h"

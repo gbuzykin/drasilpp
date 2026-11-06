@@ -1,10 +1,9 @@
-#include "device.h"
+#include "device.h"  // IWYU pragma: keep
 
 #include "d3d12_logger.h"
 #include "rendering_driver.h"
 #include "wrappers.h"
 
-#include "common/core_defs.h"
 #include "rel/tables.h"
 
 #include <cstring>

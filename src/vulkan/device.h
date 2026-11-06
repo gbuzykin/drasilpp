@@ -22,7 +22,7 @@ class Device final : public IDevice {
         return vk_funcs_.name(device_, std::forward<Args>(args)...); \
     }
 
-#include "vulkan_function_list.inl"
+#include "vulkan_function_list.inl"  // IWYU pragma: keep
 
     const DeviceVkFuncTable& getVkFuncs() { return vk_funcs_; }
 

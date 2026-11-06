@@ -1,4 +1,4 @@
-#include "command_buffer.h"
+#include "command_buffer.h"  // IWYU pragma: keep
 
 #include "vulkan_logger.h"
 

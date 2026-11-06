@@ -1,4 +1,4 @@
-#include "shader_module.h"
+#include "shader_module.h"  // IWYU pragma: keep
 
 #include "device.h"
 #include "vulkan_logger.h"

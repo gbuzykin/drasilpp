@@ -24,7 +24,7 @@ class CommandBuffer {
         return vk_funcs_->name(command_buffer_, std::forward<Args>(args)...); \
     }
 
-#include "vulkan_function_list.inl"
+#include "vulkan_function_list.inl"  // IWYU pragma: keep
 
     bool beginCommandBuffer(VkCommandBufferUsageFlags usage,
                             VkCommandBufferInheritanceInfo* secondary_command_buffer_info);

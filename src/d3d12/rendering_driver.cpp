@@ -1,4 +1,4 @@
-#include "rendering_driver.h"
+#include "rendering_driver.h"  // IWYU pragma: keep
 
 #include "buffer.h"
 #include "d3d12_logger.h"

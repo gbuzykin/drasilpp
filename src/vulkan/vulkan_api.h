@@ -25,7 +25,7 @@ struct InstanceVkFuncTable {
 #define INSTANCE_LEVEL_VK_FUNCTION_DEV(name)                              PFN_##name name;
 #define INSTANCE_LEVEL_VK_FUNCTION_FROM_EXTENSION(name, extension)        PFN_##name name;
 #define INSTANCE_LEVEL_VK_FUNCTION_FROM_EXTENSION_PHYDEV(name, extension) PFN_##name name;
-#include "vulkan_function_list.inl"
+#include "vulkan_function_list.inl"  // IWYU pragma: keep
 };
 
 struct DeviceVkFuncTable {
@@ -35,7 +35,7 @@ struct DeviceVkFuncTable {
 #define DEVICE_LEVEL_VK_FUNCTION_FROM_EXTENSION(name, extension)       PFN_##name name;
 #define DEVICE_LEVEL_VK_FUNCTION_FROM_EXTENSION_QUEUE(name, extension) PFN_##name name;
 #define DEVICE_LEVEL_VK_FUNCTION_FROM_EXTENSION_CMD(name, extension)   PFN_##name name;
-#include "vulkan_function_list.inl"
+#include "vulkan_function_list.inl"  // IWYU pragma: keep
 };
 
 class Buffer;

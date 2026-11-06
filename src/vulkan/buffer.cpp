@@ -1,4 +1,4 @@
-#include "buffer.h"
+#include "buffer.h"  // IWYU pragma: keep
 
 #include "device.h"
 #include "rendering_driver.h"

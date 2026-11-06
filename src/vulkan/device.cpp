@@ -1,4 +1,4 @@
-#include "device.h"
+#include "device.h"  // IWYU pragma: keep
 
 #include "rendering_driver.h"
 #include "surface.h"
@@ -188,7 +188,7 @@ bool Device::create(const uxs::db::value& caps) {
     DEVICE_LEVEL_VK_FUNCTION_FROM_EXTENSION(name, extension)
 #define DEVICE_LEVEL_VK_FUNCTION_FROM_EXTENSION_CMD(name, extension) \
     DEVICE_LEVEL_VK_FUNCTION_FROM_EXTENSION(name, extension)
-#include "vulkan_function_list.inl"
+#include "vulkan_function_list.inl"  // IWYU pragma: keep
 
     const VmaVulkanFunctions vulkan_functions{
         .vkGetInstanceProcAddr = instance_->getVkFuncs().vkGetInstanceProcAddr,

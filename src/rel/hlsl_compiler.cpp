@@ -1,4 +1,4 @@
-#include "rel/hlsl_compiler.h"
+#include "rel/hlsl_compiler.h"  // IWYU pragma: keep
 
 #include "common/dynamic_library.h"
 #include "common/logger.h"

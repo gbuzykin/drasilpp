@@ -1,4 +1,4 @@
-#include "pipeline.h"
+#include "pipeline.h"  // IWYU pragma: keep
 
 #include "device.h"
 #include "pipeline_layout.h"

@@ -1,4 +1,4 @@
-#include "surface.h"
+#include "surface.h"  // IWYU pragma: keep
 
 #include "rendering_driver.h"
 #include "swap_chain.h"

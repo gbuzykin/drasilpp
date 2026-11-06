@@ -1,4 +1,4 @@
-#include "rendering_driver.h"
+#include "rendering_driver.h"  // IWYU pragma: keep
 
 #include "buffer.h"
 #include "descriptor_set.h"
@@ -199,7 +199,7 @@ bool RenderingDriver::loadVulkanLoaderLibrary() {
         return false; \
     }
 
-#include "vulkan_function_list.inl"
+#include "vulkan_function_list.inl"  // IWYU pragma: keep
 
     return true;
 }
@@ -301,7 +301,7 @@ bool RenderingDriver::createInstance(const uxs::db::value& app_info) {
 #define INSTANCE_LEVEL_VK_FUNCTION_DEV(name)    INSTANCE_LEVEL_VK_FUNCTION(name)
 #define INSTANCE_LEVEL_VK_FUNCTION_FROM_EXTENSION_PHYDEV(name, extension) \
     INSTANCE_LEVEL_VK_FUNCTION_FROM_EXTENSION(name, extension)
-#include "vulkan_function_list.inl"
+#include "vulkan_function_list.inl"  // IWYU pragma: keep
 
     return true;
 }

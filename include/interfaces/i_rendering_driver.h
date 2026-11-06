@@ -1,5 +1,6 @@
 #pragma once
 
+#include "common/core_defs.h"
 #include "rel/data_blob.h"
 #include "rel/structs.h"
 #include "rel/win_desc.h"
@@ -8,16 +9,10 @@
 
 #include <optional>
 
-#if defined(WIN32)
-#    define DRASILPP_ENTRY_EXPORT extern "C" __declspec(dllexport)
-#elif defined(__linux__)
-#    define DRASILPP_ENTRY_EXPORT extern "C" __attribute__((visibility("default")))
-#endif
-
 #define DRASILPP_REGISTER_RENDERING_DRIVER(name, driver_class) \
-    constexpr drasilpp::rel::DriverDesc g_rendering_driver_descriptor{ \
+    constexpr drasilpp::rel::RenderingDriverDesc g_rendering_driver_descriptor{ \
         name, []() -> std::shared_ptr<drasilpp::rel::IRenderingDriver> { return std::make_shared<driver_class>(); }}; \
-    DRASILPP_ENTRY_EXPORT const drasilpp::rel::DriverDesc* drasilppGetRenderingDriverDescriptor() { \
+    DRASILPP_ENTRY_EXPORT const drasilpp::rel::RenderingDriverDesc* drasilppGetRenderingDriverDescriptor() { \
         return &g_rendering_driver_descriptor; \
     } \
     static_assert(true)
@@ -141,11 +136,11 @@ struct IRenderingDriver {
 };
 
 // Registered rendering driver descriptor
-struct DriverDesc {
+struct RenderingDriverDesc {
     std::string_view name;
     std::shared_ptr<IRenderingDriver> (*create_func)();
 };
 
-using GetDriverDescriptorFuncPtr = const DriverDesc* (*)();
+using GetDriverDescriptorFuncPtr = const RenderingDriverDesc* (*)();
 
 }  // namespace drasilpp::rel

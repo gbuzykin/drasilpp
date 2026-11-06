@@ -1,4 +1,4 @@
-#include "common/dynamic_library.h"
+#include "common/dynamic_library.h"  // IWYU pragma: keep
 
 #include "common/logger.h"
 
