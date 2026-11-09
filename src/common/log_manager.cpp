@@ -29,8 +29,8 @@ std::chrono::seconds currentTimeZoneOffset() {
         std::tm gmtm = *std::gmtime(&t);
 
         zone_offset = sys_days{year_month_day{2000y, January, 1d}} -
-                      sys_days{year_month_day{year{1900 + gmtm.tm_year}, month{1U + static_cast<unsigned>(gmtm.tm_mon)},
-                                              day{static_cast<unsigned>(gmtm.tm_mday)}}} -
+                      sys_days{year_month_day{year{1900 + gmtm.tm_year}, month{1U + unsigned(gmtm.tm_mon)},
+                                              day{unsigned(gmtm.tm_mday)}}} -
                       hours(gmtm.tm_hour) - minutes(gmtm.tm_min) - seconds(gmtm.tm_sec);
 #else
         const auto info = current_zone()->get_info(system_clock::now());

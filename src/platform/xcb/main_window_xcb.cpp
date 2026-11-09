@@ -160,7 +160,7 @@ int MainWindow::Implementation::mainLoop() {
                 if (key_state.release) {
                     if (std::chrono::duration<double>(timer_now - key_state.release_timer_start).count() >= 0.01) {
                         key_state.release = false;
-                        CALL_AND_CHECK_RESULT(onKeyEvent(static_cast<KeyCode>(n), false));
+                        CALL_AND_CHECK_RESULT(onKeyEvent(KeyCode(n), false));
                     } else {
                         has_pressed = true;
                     }
@@ -254,9 +254,7 @@ int MainWindow::Implementation::mainLoop() {
                     auto* ev = reinterpret_cast<xcb_key_press_event_t*>(event.get());
                     if (ev->detail >= 1 && ev->detail < key_state_table_.size()) {
                         auto& key_state = key_state_table_[ev->detail];
-                        if (!key_state.release) {
-                            CALL_AND_CHECK_RESULT(onKeyEvent(static_cast<KeyCode>(ev->detail), true));
-                        }
+                        if (!key_state.release) { CALL_AND_CHECK_RESULT(onKeyEvent(KeyCode(ev->detail), true)); }
                         key_state.release = false;
                     }
                 } break;
@@ -275,8 +273,7 @@ int MainWindow::Implementation::mainLoop() {
                 case XCB_BUTTON_PRESS: {
                     auto* ev = reinterpret_cast<xcb_button_press_event_t*>(event.get());
                     if (ev->detail >= 1 && ev->detail <= 3) {
-                        CALL_AND_CHECK_RESULT(
-                            onMouseButtonEvent(static_cast<KeyCode>(ev->detail), true, ev->event_x, ev->event_y));
+                        CALL_AND_CHECK_RESULT(onMouseButtonEvent(KeyCode(ev->detail), true, ev->event_x, ev->event_y));
                     } else if (ev->detail == 4 || ev->detail == 5) {
                         CALL_AND_CHECK_RESULT(onMouseWheel(ev->detail == 4 ? 0.24F : -0.24F, ev->event_x, ev->event_y,
                                                            get_mouse_button_mask(ev->state)));
@@ -286,8 +283,7 @@ int MainWindow::Implementation::mainLoop() {
                 case XCB_BUTTON_RELEASE: {
                     auto* ev = reinterpret_cast<xcb_button_release_event_t*>(event.get());
                     if (ev->detail >= 1 && ev->detail <= 3) {
-                        CALL_AND_CHECK_RESULT(
-                            onMouseButtonEvent(static_cast<KeyCode>(ev->detail), false, ev->event_x, ev->event_y));
+                        CALL_AND_CHECK_RESULT(onMouseButtonEvent(KeyCode(ev->detail), false, ev->event_x, ev->event_y));
                     }
                 } break;
 
@@ -304,8 +300,7 @@ int MainWindow::Implementation::mainLoop() {
 
 xcb_atom_t MainWindow::Implementation::queryAtom(std::string_view name) {
     std::unique_ptr<xcb_intern_atom_reply_t, void (*)(void*)> reply{
-        ::xcb_intern_atom_reply(connection_,
-                                ::xcb_intern_atom(connection_, 1, static_cast<std::uint16_t>(name.size()), name.data()),
+        ::xcb_intern_atom_reply(connection_, ::xcb_intern_atom(connection_, 1, std::uint16_t(name.size()), name.data()),
                                 nullptr),
         std::free};
     return reply->atom;

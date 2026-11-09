@@ -127,7 +127,7 @@ bool SwapChain::create(const uxs::db::value& opts) {
     destroyImageViews();
     images_.clear();
 
-    const std::uint32_t old_summit_kit_count = static_cast<std::uint32_t>(submit_kits_.size());
+    const std::uint32_t old_summit_kit_count = std::uint32_t(submit_kits_.size());
     const std::uint32_t new_summit_kit_count = std::max(getFifCount(), image_count);
     if (new_summit_kit_count > old_summit_kit_count) {
         submit_kits_.resize(new_summit_kit_count);
