@@ -1,6 +1,6 @@
 #include "rel/hlsl_compiler.h"  // IWYU pragma: keep
 
-#include "common/dynamic_library.h"
+#include "common/dyn_library.h"
 #include "common/logger.h"
 #include "util/ref_ptr.h"
 
@@ -52,18 +52,18 @@ HlslCompiler::Implementation::~Implementation() {
     include_handler_.reset();
     dxc_compiler_.reset();
     dxc_utils_.reset();
-    freeDynamicLibrary(dxcompiler_library_);
+    freeDynLibrary(dxcompiler_library_);
 }
 
 bool HlslCompiler::Implementation::init() {
     std::lock_guard lk(mtx_);
 
     if (!dxcompiler_library_) {
-        dxcompiler_library_ = loadDynamicLibrary("", "dxcompiler");
+        dxcompiler_library_ = loadDynLibrary("", "dxcompiler");
         if (!dxcompiler_library_) { return false; }
     }
 
-    create_proc_ = (DxcCreateInstanceProc)getDynamicLibraryEntry(dxcompiler_library_, "DxcCreateInstance");
+    create_proc_ = (DxcCreateInstanceProc)getDynLibraryEntry(dxcompiler_library_, "DxcCreateInstance");
     if (!create_proc_) {
         logError("couldn't load DxcCreateInstance function");
         return false;

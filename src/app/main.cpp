@@ -2,7 +2,7 @@
 #include "main_window.h"
 #include "model_loader.h"
 
-#include "common/dynamic_library.h"
+#include "common/dyn_library.h"
 #include "common/logger.h"
 #include "interfaces/i_rendering_driver.h"
 #include "rel/camera.h"
@@ -207,11 +207,11 @@ class AppMainWindow final : public MainWindow {
 int AppMainWindow::init(int argc, char** argv) {
     using namespace uxs::db::json::literals;
 
-    void* driver_library = loadDynamicLibrary(".", "drasilpp-rel-vulkan");
+    void* driver_library = loadDynLibrary(".", "drasilpp-rel-vulkan");
     if (!driver_library) { return -1; }
 
-    auto* entry = (rel::GetDriverDescriptorFuncPtr)getDynamicLibraryEntry(driver_library,
-                                                                          "drasilppGetRenderingDriverDescriptor");
+    auto* entry = (rel::GetDriverDescriptorFuncPtr)getDynLibraryEntry(driver_library,
+                                                                      "drasilppGetRenderingDriverDescriptor");
     if (!entry) { return -1; }
 
     const auto app_info = R"({"name": "DrasilPP", "version": [1, 0, 0]})"_json;

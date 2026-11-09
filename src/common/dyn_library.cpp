@@ -1,4 +1,4 @@
-#include "common/dynamic_library.h"  // IWYU pragma: keep
+#include "common/dyn_library.h"  // IWYU pragma: keep
 
 #include "common/logger.h"
 
@@ -14,7 +14,7 @@
 
 using namespace drasilpp;
 
-void* drasilpp::loadDynamicLibrary(const std::filesystem::path& library_dir, std::string_view library_name) {
+void* drasilpp::loadDynLibrary(const std::filesystem::path& library_dir, std::string_view library_name) {
     std::filesystem::path library_path(uxs::utf_native_path_adapter{}(library_name));
 
 #if defined(WIN32)
@@ -68,7 +68,7 @@ void* drasilpp::loadDynamicLibrary(const std::filesystem::path& library_dir, std
     return library;
 }
 
-void drasilpp::freeDynamicLibrary(void* library) {
+void drasilpp::freeDynLibrary(void* library) {
     if (!library) { return; }
 #if defined(WIN32)
     ::FreeLibrary(static_cast<HMODULE>(library));
@@ -77,7 +77,7 @@ void drasilpp::freeDynamicLibrary(void* library) {
 #endif
 }
 
-void* drasilpp::getDynamicLibraryEntry(void* library, const char* entry_name) {
+void* drasilpp::getDynLibraryEntry(void* library, const char* entry_name) {
 #if defined(WIN32)
     void* entry = ::GetProcAddress(static_cast<HMODULE>(library), entry_name);
 #elif defined(__linux__)

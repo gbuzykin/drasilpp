@@ -12,7 +12,7 @@
 #include "texture.h"
 #include "vulkan_logger.h"
 
-#include "common/dynamic_library.h"
+#include "common/dyn_library.h"
 
 #include <algorithm>
 #include <utility>
@@ -29,7 +29,7 @@ RenderingDriver::RenderingDriver() {}
 RenderingDriver::~RenderingDriver() {
     logDebug(LOG_VK "destroy RenderingDriver");
     vkDestroyInstance(nullptr);
-    freeDynamicLibrary(vulkan_library_);
+    freeDynLibrary(vulkan_library_);
 }
 
 bool RenderingDriver::isExtensionSupported(const char* extension) const {
@@ -182,14 +182,14 @@ std::shared_ptr<IRenderTarget> RenderingDriver::createSwapChainRenderTarget(
 
 bool RenderingDriver::loadVulkanLoaderLibrary() {
 #if defined(WIN32)
-    vulkan_library_ = loadDynamicLibrary("", "vulkan-1");
+    vulkan_library_ = loadDynLibrary("", "vulkan-1");
 #elif defined(__linux__)
-    vulkan_library_ = loadDynamicLibrary("", "vulkan");
+    vulkan_library_ = loadDynLibrary("", "vulkan");
 #endif
     if (!vulkan_library_) { return false; }
 
 #define EXPORTED_VK_FUNCTION(name) \
-    vk_funcs_.name = (PFN_##name)getDynamicLibraryEntry(vulkan_library_, #name); \
+    vk_funcs_.name = (PFN_##name)getDynLibraryEntry(vulkan_library_, #name); \
     if (!vk_funcs_.name) { return false; }
 
 #define GLOBAL_LEVEL_VK_FUNCTION(name) \
