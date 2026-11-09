@@ -3,7 +3,7 @@
 #include "model_loader.h"
 
 #include "common/dyn_library.h"
-#include "common/logger.h"
+#include "common/log_manager.h"
 #include "interfaces/i_rendering_driver.h"
 #include "rel/camera.h"
 #include "util/range_helpers.h"
@@ -87,7 +87,7 @@ class AppMainWindow final : public MainWindow {
         } else {
             const double delta = std::chrono::duration<double>(time_now - time_fps_last_).count();
             if (delta >= 2.) {
-                logInfo("fps = {:.1f}", frame_counter_ / delta);
+                info().printLn("fps = {:.1f}", frame_counter_ / delta);
                 frame_counter_ = 0;
                 time_fps_last_ = time_now;
             }
@@ -230,16 +230,16 @@ int AppMainWindow::init(int argc, char** argv) {
     device_caps_ = R"({"needs_compute": true})"_json;
 
     for (device_index = 0; device_index < device_count; ++device_index) {
-        logInfo("device #{}: {}", device_index, driver_->getPhysicalDeviceName(device_index));
+        info().printLn("device #{}: {}", device_index, driver_->getPhysicalDeviceName(device_index));
         if (driver_->isSuitablePhysicalDevice(device_index, device_caps_)) { break; }
     }
 
     if (device_index == device_count) {
-        logError("no suitable physical device");
+        error().printLn("no suitable physical device");
         return -1;
     }
 
-    logInfo("selecting device #{}", device_index);
+    info().printLn("selecting device #{}", device_index);
 
     if (!(device_ = driver_->createDevice(device_index, device_caps_))) { return -1; }
 
@@ -272,19 +272,19 @@ std::shared_ptr<rel::IShaderModule> AppMainWindow::compileShaderModule(const cha
         rel::DataBlob compiler_output;
         auto shader_binary = driver_->compileShader(shader_text, args, compiler_output);
         if (!shader_binary) {
-            logError("couldn't compile shader '{}'", filename);
-            logError("{}", compiler_output.getTextView());
+            error().printLn("couldn't compile shader '{}'", filename);
+            error().printLn("{}", compiler_output.getTextView());
             return nullptr;
         }
 
         if (!compiler_output.isEmpty()) {
-            logWarning("shader '{}' compiled with warnings", filename);
-            logWarning("{}", compiler_output.getTextView());
+            warning().printLn("shader '{}' compiled with warnings", filename);
+            warning().printLn("{}", compiler_output.getTextView());
         }
 
         return driver_->createShaderModule(device_, std::move(*shader_binary));
     } else {
-        logError("couldn't open '{}' shader file", filename);
+        error().printLn("couldn't open '{}' shader file", filename);
     }
 
     return nullptr;
@@ -367,7 +367,7 @@ bool AppMainWindow::initScene() {
 
     frame_data_.resize(render_target_->getFifCount());
     if (frame_data_.empty()) {
-        logError("bad render target");
+        error().printLn("bad render target");
         return false;
     }
 
@@ -445,14 +445,14 @@ int main(int argc, char** argv) {
     try {
         AppMainWindow win;
 
-        setLogLevel(LogLevel::PR_DEBUG);
+        setLogLevel(LogLevel::LL_DEBUG);
         int init_result = win.init(argc, argv);
         if (init_result != 0) { return init_result; }
 
         return win.mainLoop();
 
     } catch (const std::exception& e) {
-        logError("exception caught: {}", e.what());
+        error().printLn("exception caught: {}", e.what());
         return -1;
     }
 }

@@ -1,6 +1,6 @@
 #include "main_window.h"
 
-#include "common/logger.h"
+#include "common/log_manager.h"
 
 #include <xcb/xcb.h>
 
@@ -76,14 +76,14 @@ bool MainWindow::Implementation::createWindow(const char* title, std::uint32_t w
     // Open the connection to the X server
     connection_ = ::xcb_connect(NULL, NULL);
     if (::xcb_connection_has_error(connection_)) {
-        logError("couldn't open Xcb connection");
+        error().printLn("couldn't open Xcb connection");
         return false;
     }
 
     // Get the first screen
     screen_ = ::xcb_setup_roots_iterator(::xcb_get_setup(connection_)).data;
     if (!screen_) {
-        logError("couldn't obtain Xcb screen");
+        error().printLn("couldn't obtain Xcb screen");
         return false;
     }
 
@@ -110,7 +110,7 @@ bool MainWindow::Implementation::createWindow(const char* title, std::uint32_t w
 
     std::unique_ptr<xcb_generic_error_t, void (*)(void*)> err{::xcb_request_check(connection_, cookie), std::free};
     if (err) {
-        logError("couldn't create Xcb window: {}", err->error_code);
+        error().printLn("couldn't create Xcb window: {}", err->error_code);
         return false;
     }
 

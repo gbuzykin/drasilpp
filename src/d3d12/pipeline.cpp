@@ -162,7 +162,7 @@ bool Pipeline::create(std::span<IShaderModule* const> shader_modules, const uxs:
     HRESULT result = device_->getD3D12Device()->CreateGraphicsPipelineState(
         &pipeline_desc, IID_PPV_ARGS(pipeline_.reset_and_get_address()));
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't create PSO: {}", D3D12Result{result});
+        error().printLn(LOG_D3D12 "couldn't create PSO: {}", D3D12Result{result});
         return false;
     }
 

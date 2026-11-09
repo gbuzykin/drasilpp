@@ -14,13 +14,13 @@ bool Fence::create(Device& device) {
     HRESULT result = device.getD3D12Device()->CreateFence(0, D3D12_FENCE_FLAG_NONE,
                                                           IID_PPV_ARGS(fence_.reset_and_get_address()));
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't create fence: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "couldn't create fence: {}", D3D12Result(result));
         return false;
     }
 
     event_handle_ = ::CreateEventExW(nullptr, L"", 0, EVENT_ALL_ACCESS);
     if (event_handle_ == INVALID_HANDLE_VALUE) {
-        logError(LOG_D3D12 "couldn't create Win32 event: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "couldn't create Win32 event: {}", D3D12Result(result));
         return false;
     }
 
@@ -33,7 +33,7 @@ bool Fence::queueSignal(DevQueue& queue) {
 
     HRESULT result = queue.getD3D12Queue()->Signal(fence_.get(), current_fence_);
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't queue fence signal: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "couldn't queue fence signal: {}", D3D12Result(result));
         return false;
     }
 
@@ -45,7 +45,7 @@ bool Fence::wait() {
 
     HRESULT result = fence_->SetEventOnCompletion(current_fence_, event_handle_);
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't set fence completion event: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "couldn't set fence completion event: {}", D3D12Result(result));
         return false;
     }
 

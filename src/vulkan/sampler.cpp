@@ -39,7 +39,7 @@ bool Sampler::create(const SamplerDesc& desc) {
 
     VkResult result = device_->vkCreateSampler(&create_info, nullptr, &sampler_);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't create sampler: {}", result);
+        error().printLn(LOG_VK "couldn't create sampler: {}", result);
         return false;
     }
 

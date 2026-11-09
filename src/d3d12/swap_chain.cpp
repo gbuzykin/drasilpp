@@ -41,7 +41,7 @@ void SwapChain::imageBarrierAfter(ID3D12GraphicsCommandList* command_list, std::
 RenderTargetResult SwapChain::presentImage() {
     HRESULT result = swap_chain_->Present(0, 0);
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't present swap chain: {}", D3D12Result{result});
+        error().printLn(LOG_D3D12 "couldn't present swap chain: {}", D3D12Result{result});
         return RenderTargetResult::FAILED;
     }
     return RenderTargetResult::SUCCESS;
@@ -105,14 +105,14 @@ bool SwapChain::recreateSwapChainResources(const uxs::db::value& opts) {
         HRESULT result = surface_->getInstance().getDXGIFactory()->CreateSwapChain(
             device_->getDirectQueue().getD3D12Queue(), &swap_chain_desc, swap_chain_.reset_and_get_address());
         if (result != S_OK) {
-            logError(LOG_D3D12 "couldn't create swap chain: {}", D3D12Result(result));
+            error().printLn(LOG_D3D12 "couldn't create swap chain: {}", D3D12Result(result));
             return false;
         }
     } else {
         HRESULT result = swap_chain_->ResizeBuffers(SWAP_CHAIN_BUFFER_COUNT, image_extent_.width, image_extent_.height,
                                                     d3d12_back_buffer_format, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
         if (result != S_OK) {
-            logError(LOG_D3D12 "couldn't resize swap chain: {}", D3D12Result(result));
+            error().printLn(LOG_D3D12 "couldn't resize swap chain: {}", D3D12Result(result));
             return false;
         }
     }
@@ -121,7 +121,7 @@ bool SwapChain::recreateSwapChainResources(const uxs::db::value& opts) {
     for (std::uint32_t n = 0; n < SWAP_CHAIN_BUFFER_COUNT; ++n) {
         HRESULT result = swap_chain_->GetBuffer(n, IID_PPV_ARGS(images_[n].reset_and_get_address()));
         if (result != S_OK) {
-            logError(LOG_D3D12 "couldn't get swap chain image buffer: {}", D3D12Result(result));
+            error().printLn(LOG_D3D12 "couldn't get swap chain image buffer: {}", D3D12Result(result));
             return false;
         }
     }

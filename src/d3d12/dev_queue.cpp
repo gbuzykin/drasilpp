@@ -17,7 +17,7 @@ bool DevQueue::create(Device& device, D3D12_COMMAND_LIST_TYPE type, std::uint32_
         constAddressOf(D3D12_COMMAND_QUEUE_DESC{.Type = type, .Flags = D3D12_COMMAND_QUEUE_FLAG_NONE}),
         IID_PPV_ARGS(queue_.reset_and_get_address()));
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't create command queue: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "couldn't create command queue: {}", D3D12Result(result));
         return false;
     }
 
@@ -37,7 +37,7 @@ bool DevQueue::growAllocatorCount(std::uint32_t allocator_count) {
         HRESULT result = device_->getD3D12Device()->CreateCommandAllocator(
             type_, IID_PPV_ARGS(allocators_[n].reset_and_get_address()));
         if (result != S_OK) {
-            logError(LOG_D3D12 "couldn't create command allocator: {}", D3D12Result(result));
+            error().printLn(LOG_D3D12 "couldn't create command allocator: {}", D3D12Result(result));
             return false;
         }
     }
@@ -48,7 +48,7 @@ bool DevQueue::growAllocatorCount(std::uint32_t allocator_count) {
 bool DevQueue::resetAllocator(std::uint32_t allocator_index) {
     HRESULT result = allocators_[allocator_index]->Reset();
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't reset command allocator: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "couldn't reset command allocator: {}", D3D12Result(result));
         return false;
     }
     return true;
@@ -65,7 +65,7 @@ util::ref_ptr<ID3D12GraphicsCommandList> DevQueue::createGraphicsCommandList(std
     HRESULT result = device_->getD3D12Device()->CreateCommandList(0, type_, allocators_[allocator_index].get(), nullptr,
                                                                   IID_PPV_ARGS(command_list.reset_and_get_address()));
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't create graphics command list: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "couldn't create graphics command list: {}", D3D12Result(result));
         return nullptr;
     }
 
@@ -79,7 +79,7 @@ util::ref_ptr<ID3D12GraphicsCommandList> DevQueue::createGraphicsCommandList(std
 bool DevQueue::closeCommandList(ID3D12GraphicsCommandList* command_list) {
     HRESULT result = command_list->Close();
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't close command list: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "couldn't close command list: {}", D3D12Result(result));
         return false;
     }
     return true;
@@ -89,7 +89,7 @@ bool DevQueue::resetCommandList(std::uint32_t allocator_index, ID3D12GraphicsCom
                                 ID3D12PipelineState* pipeline) {
     HRESULT result = command_list->Reset(allocators_[allocator_index].get(), pipeline);
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't reset command list: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "couldn't reset command list: {}", D3D12Result(result));
         return false;
     }
     return true;

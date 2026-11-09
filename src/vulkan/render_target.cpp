@@ -126,7 +126,7 @@ bool RenderTarget::create(const uxs::db::value& opts) {
 
     VkResult result = device_->vkCreateRenderPass(&create_info, nullptr, &render_pass_);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't create render pass: {}", result);
+        error().printLn(LOG_VK "couldn't create render pass: {}", result);
         return false;
     }
 
@@ -170,7 +170,7 @@ bool RenderTarget::createFrameResources() {
                                              constAddressOf(VmaAllocationCreateInfo{.usage = VMA_MEMORY_USAGE_AUTO}),
                                              &kit.depth_stencil_image, &kit.depth_stencil_allocation, nullptr);
             if (result != VK_SUCCESS) {
-                logError(LOG_VK "couldn't create depth&stencil image: {}", result);
+                error().printLn(LOG_VK "couldn't create depth&stencil image: {}", result);
                 return false;
             }
 
@@ -191,7 +191,7 @@ bool RenderTarget::createFrameResources() {
 
             result = device_->vkCreateImageView(&view_create_info, nullptr, &kit.depth_stencil_image_view);
             if (result != VK_SUCCESS) {
-                logError(LOG_VK "couldn't create depth&stencil image view: {}", result);
+                error().printLn(LOG_VK "couldn't create depth&stencil image view: {}", result);
                 return false;
             }
 
@@ -225,7 +225,7 @@ bool RenderTarget::createFrameResources() {
 
         VkResult result = device_->vkCreateFramebuffer(&framebuffer_create_info, nullptr, &kit.framebuffer);
         if (result != VK_SUCCESS) {
-            logError(LOG_VK "couldn't create framebuffer: {}", result);
+            error().printLn(LOG_VK "couldn't create framebuffer: {}", result);
             return false;
         }
     }

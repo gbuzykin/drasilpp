@@ -41,7 +41,7 @@ bool Buffer::create(BufferType type, UINT64 size) {
                                                              D3D12_RESOURCE_STATE_COMMON, nullptr,
                                                              allocation_.reset_and_get_address(), IID_NULL, nullptr);
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't create buffer resource: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "couldn't create buffer resource: {}", D3D12Result(result));
         return false;
     }
 

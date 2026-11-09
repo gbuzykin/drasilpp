@@ -38,12 +38,12 @@ bool Texture::create(const TextureDesc& desc) {
     device_->getPhysicalDevice().vkGetPhysicalDeviceFormatProperties(vk_image_format, &format_properties);
 
     if (!(format_properties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT)) {
-        logError(LOG_VK "provided format is not supported for a sampled image");
+        error().printLn(LOG_VK "provided format is not supported for a sampled image");
         return false;
     }
 
     if (!(format_properties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT)) {
-        logError(LOG_VK "provided format is not supported for a linear image filtering");
+        error().printLn(LOG_VK "provided format is not supported for a linear image filtering");
         return false;
     }
 
@@ -66,7 +66,7 @@ bool Texture::create(const TextureDesc& desc) {
                                      constAddressOf(VmaAllocationCreateInfo{.usage = VMA_MEMORY_USAGE_AUTO}), &image_,
                                      &allocation_, nullptr);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't create image: {}", result);
+        error().printLn(LOG_VK "couldn't create image: {}", result);
         return false;
     }
 
@@ -87,7 +87,7 @@ bool Texture::create(const TextureDesc& desc) {
 
     result = device_->vkCreateImageView(&view_create_info, nullptr, &image_view_);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't create image view: {}", result);
+        error().printLn(LOG_VK "couldn't create image view: {}", result);
         return false;
     }
 

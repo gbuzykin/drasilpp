@@ -61,7 +61,7 @@ VkExtent2D SwapChain::chooseImageExtent(const VkSurfaceCapabilitiesKHR& capabili
 bool SwapChain::chooseImageUsage(const VkSurfaceCapabilitiesKHR& capabilities, VkImageUsageFlags& usage) {
     const VkImageUsageFlags image_usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
     if ((capabilities.supportedUsageFlags & image_usage) != image_usage) {
-        logError(LOG_VK "desired surface usage in not supported");
+        error().printLn(LOG_VK "desired surface usage in not supported");
         return false;
     }
     usage = image_usage;
@@ -71,7 +71,7 @@ bool SwapChain::chooseImageUsage(const VkSurfaceCapabilitiesKHR& capabilities, V
 VkPresentModeKHR SwapChain::choosePresentMode(std::span<const VkPresentModeKHR> present_modes) {
     const VkPresentModeKHR desired = VK_PRESENT_MODE_MAILBOX_KHR;
     if (std::ranges::any_of(present_modes, [](const auto& mode) { return mode == desired; })) { return desired; }
-    logWarning(LOG_VK "MAILBOX surface present mode is not supported; selecting FIFO mode");
+    warning().printLn(LOG_VK "MAILBOX surface present mode is not supported; selecting FIFO mode");
     return VK_PRESENT_MODE_FIFO_KHR;
 }
 
@@ -92,16 +92,16 @@ VkSurfaceFormatKHR SwapChain::chooseImageFormat(std::span<const VkSurfaceFormatK
     auto desired_format_it = std::ranges::find_if(
         formats, [&image_format](const auto& avail) { return avail.format == image_format.format; });
     if (desired_format_it != formats.end()) {
-        logWarning(LOG_VK
-                   "desired combination of surface format and color space is not supported; "
-                   "selecting other color space");
+        warning().printLn(LOG_VK
+                          "desired combination of surface format and color space is not supported; "
+                          "selecting other color space");
         image_format.colorSpace = desired_format_it->colorSpace;
         return image_format;
     }
 
-    logWarning(LOG_VK
-               "desired surface format is not supported; "
-               "selecting available format and color space combination");
+    warning().printLn(LOG_VK
+                      "desired surface format is not supported; "
+                      "selecting available format and color space combination");
     return formats[0];
 }
 
@@ -117,7 +117,7 @@ bool SwapChain::create(const uxs::db::value& opts) {
     image_usage_ = surface_->getImageUsage();
 
     if (image_extent_.width == 0 || image_extent_.height == 0) {
-        logError(LOG_VK "failed to choose swap chain image size");
+        error().printLn(LOG_VK "failed to choose swap chain image size");
         return false;
     }
 
@@ -163,7 +163,7 @@ bool SwapChain::create(const uxs::db::value& opts) {
     const VkSwapchainKHR old_swap_chain = swap_chain_;
     VkResult result = device_->vkCreateSwapchainKHR(&create_info, nullptr, &swap_chain_);
     if (result != VK_SUCCESS || swap_chain_ == VK_NULL_HANDLE) {
-        logError(LOG_VK "couldn't create swap chain: {}", result);
+        error().printLn(LOG_VK "couldn't create swap chain: {}", result);
         return false;
     }
 
@@ -281,14 +281,14 @@ bool SwapChain::loadImageHandles() {
     std::uint32_t image_count = 0;
     VkResult result = device_->vkGetSwapchainImagesKHR(swap_chain_, &image_count, nullptr);
     if (result != VK_SUCCESS || image_count == 0) {
-        logError(LOG_VK "couldn't get the number of swap chain images: {}", result);
+        error().printLn(LOG_VK "couldn't get the number of swap chain images: {}", result);
         return false;
     }
 
     images_.resize(image_count, VK_NULL_HANDLE);
     result = device_->vkGetSwapchainImagesKHR(swap_chain_, &image_count, images_.data());
     if (result != VK_SUCCESS || image_count == 0) {
-        logError(LOG_VK "couldn't enumerate swap_chain images: {}", result);
+        error().printLn(LOG_VK "couldn't enumerate swap_chain images: {}", result);
         return false;
     }
 
@@ -316,7 +316,7 @@ bool SwapChain::createImageViews() {
 
         VkResult result = device_->vkCreateImageView(&create_info, nullptr, &image_views_[n]);
         if (result != VK_SUCCESS) {
-            logError(LOG_VK "couldn't create image view for swap chain image: {}", result);
+            error().printLn(LOG_VK "couldn't create image view for swap chain image: {}", result);
             return false;
         }
     }

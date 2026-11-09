@@ -25,7 +25,7 @@ bool ShaderModule::create(const DataBlob& bytecode) {
 
     VkResult result = device_->vkCreateShaderModule(&create_info, nullptr, &shader_module_);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't create shader module: {}", result);
+        error().printLn(LOG_VK "couldn't create shader module: {}", result);
         return false;
     }
 

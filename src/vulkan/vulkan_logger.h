@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/logger.h"  // IWYU pragma: keep
+#include "common/log_manager.h"  // IWYU pragma: keep
 
 #include <uxs/format_common.h>
 

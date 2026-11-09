@@ -14,7 +14,7 @@ using namespace drasilpp::rel::vulkan;
 
 bool DevQueue::create(Device& device, std::uint32_t command_pool_count) {
     if (family_index_ == INVALID_UINT32_VALUE) {
-        logError(LOG_VK "no selected queue family");
+        error().printLn(LOG_VK "no selected queue family");
         return false;
     }
 
@@ -37,7 +37,7 @@ bool DevQueue::growCommandPoolCount(std::uint32_t command_pool_count) {
                                                        }),
                                                        nullptr, &cmd_pools_[n].command_pool_);
         if (result != VK_SUCCESS) {
-            logError(LOG_VK "couldn't create command pool: {}", result);
+            error().printLn(LOG_VK "couldn't create command pool: {}", result);
             return false;
         }
 
@@ -50,7 +50,7 @@ bool DevQueue::growCommandPoolCount(std::uint32_t command_pool_count) {
 bool DevQueue::resetCommandPool(std::uint32_t command_pool_index) {
     VkResult result = device_->vkResetCommandPool(cmd_pools_[command_pool_index].command_pool_, 0);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't reset command pool: {}", result);
+        error().printLn(LOG_VK "couldn't reset command pool: {}", result);
         return false;
     }
     return true;
@@ -82,7 +82,7 @@ bool DevQueue::submitCommandBuffers(util::multispan<const VkSemaphore, const VkP
 
     VkResult result = device_->getVkFuncs().vkQueueSubmit(queue_, 1, &submit_info, fence);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "error occurred during command buffer submission: {}", result);
+        error().printLn(LOG_VK "error occurred during command buffer submission: {}", result);
         return false;
     }
 
@@ -123,7 +123,7 @@ bool DevQueue::obtainCommandBuffer(std::uint32_t command_pool_index, CommandBuff
         VkResult result = device_->vkAllocateCommandBuffers(
             &allocate_info, cmd_pool.allocated_command_buffers_.data() + cmd_pool.used_command_buffer_count_);
         if (result != VK_SUCCESS) {
-            logError(LOG_VK "couldn't allocate command buffers: {}", result);
+            error().printLn(LOG_VK "couldn't allocate command buffers: {}", result);
             return false;
         }
     }

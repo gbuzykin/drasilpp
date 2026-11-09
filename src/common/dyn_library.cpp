@@ -1,6 +1,6 @@
 #include "common/dyn_library.h"  // IWYU pragma: keep
 
-#include "common/logger.h"
+#include "common/log_manager.h"
 
 #include <uxs/string_utf.h>
 
@@ -32,7 +32,7 @@ void* drasilpp::loadDynLibrary(const std::filesystem::path& library_dir, std::st
         try {
             library_path = std::filesystem::canonical(library_path);
         } catch (const std::filesystem::filesystem_error& e) {
-            logError("couldn't find dynamic library '{}': {}", library_path.filename(), e.what());
+            error().printLn("couldn't find dynamic library '{}': {}", library_path.filename(), e.what());
             return nullptr;
         }
     }
@@ -63,7 +63,7 @@ void* drasilpp::loadDynLibrary(const std::filesystem::path& library_dir, std::st
     }
 #endif
 
-    if (!library) { logError("couldn't load dynamic library '{}': {}", library_path.filename(), error_message); }
+    if (!library) { error().printLn("couldn't load dynamic library '{}': {}", library_path.filename(), error_message); }
 
     return library;
 }
@@ -84,7 +84,7 @@ void* drasilpp::getDynLibraryEntry(void* library, const char* entry_name) {
     void* entry = ::dlsym(library, entry_name);
 #endif
 
-    if (!entry) { logError("couldn't find entry point '{}'", entry_name); }
+    if (!entry) { error().printLn("couldn't find entry point '{}'", entry_name); }
 
     return entry;
 }

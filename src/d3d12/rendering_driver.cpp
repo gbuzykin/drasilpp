@@ -23,7 +23,7 @@ using namespace drasilpp::rel::d3d12;
 
 RenderingDriver::RenderingDriver() {}
 
-RenderingDriver::~RenderingDriver() { logDebug(LOG_D3D12 "destroy RenderingDriver"); }
+RenderingDriver::~RenderingDriver() { debug().printLn(LOG_D3D12 "destroy RenderingDriver"); }
 
 //@{ IRenderingDriver
 
@@ -33,7 +33,7 @@ bool RenderingDriver::init(const uxs::db::value& app_info) {
         util::ref_ptr<ID3D12Debug> debug_controller;
         HRESULT result = ::D3D12GetDebugInterface(IID_PPV_ARGS(debug_controller.reset_and_get_address()));
         if (result != S_OK) {
-            logError(LOG_D3D12 "couldn't get debug interface: {}", D3D12Result{result});
+            error().printLn(LOG_D3D12 "couldn't get debug interface: {}", D3D12Result{result});
             return false;
         }
         debug_controller->EnableDebugLayer();
@@ -42,7 +42,7 @@ bool RenderingDriver::init(const uxs::db::value& app_info) {
 
     HRESULT result = CreateDXGIFactory1(IID_PPV_ARGS(dxgi_factory_.reset_and_get_address()));
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't create DXGI factory: {}", D3D12Result{result});
+        error().printLn(LOG_D3D12 "couldn't create DXGI factory: {}", D3D12Result{result});
         return false;
     }
 

@@ -26,7 +26,7 @@ bool Device::create(const uxs::db::value& caps) {
     HRESULT result = ::D3D12CreateDevice(physical_device_.getAdapter(), D3D_FEATURE_LEVEL_12_0,
                                          IID_PPV_ARGS(device_.reset_and_get_address()));
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't create D3D12 device: {}", D3D12Result{result});
+        error().printLn(LOG_D3D12 "couldn't create D3D12 device: {}", D3D12Result{result});
         return false;
     }
 
@@ -38,7 +38,7 @@ bool Device::create(const uxs::db::value& caps) {
 
     result = D3D12MA::CreateAllocator(&allocator_desc, allocator_.reset_and_get_address());
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't create D3D12MA allocator: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "couldn't create D3D12MA allocator: {}", D3D12Result(result));
         return false;
     }
 
@@ -250,7 +250,7 @@ bool Device::waitDevice() {
 bool Device::StagingBuffer::map() {
     HRESULT result = allocation->GetResource()->Map(0, nullptr, &ptr);
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't map staging buffer: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "couldn't map staging buffer: {}", D3D12Result(result));
         return false;
     }
     return true;
@@ -282,7 +282,7 @@ bool Device::createStagingBuffer(UINT64 size, StagingBuffer& buffer) {
                                                 D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
                                                 buffer.allocation.reset_and_get_address(), IID_NULL, nullptr);
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't create buffer resource: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "couldn't create buffer resource: {}", D3D12Result(result));
         return false;
     }
 

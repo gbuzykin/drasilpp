@@ -101,13 +101,13 @@ bool Surface::create(const WindowDescriptor& win_desc) {
         } break;
 #endif
         default: {
-            logError(LOG_VK "unsupported platform");
+            error().printLn(LOG_VK "unsupported platform");
             return false;
         } break;
     }
 
     if (result != VK_SUCCESS || surface_ == VK_NULL_HANDLE) {
-        logError(LOG_VK "couldn't create surface: {}", result);
+        error().printLn(LOG_VK "couldn't create surface: {}", result);
         return false;
     }
 
@@ -117,7 +117,7 @@ bool Surface::create(const WindowDescriptor& win_desc) {
 bool Surface::loadCapabilities(PhysicalDevice& physical_device) {
     VkResult result = physical_device.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(surface_, &capabilities_);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't get surface capabilities: {}", result);
+        error().printLn(LOG_VK "couldn't get surface capabilities: {}", result);
         return false;
     }
 
@@ -128,14 +128,14 @@ bool Surface::loadFormats(PhysicalDevice& physical_device) {
     std::uint32_t formats_count = 0;
     VkResult result = physical_device.vkGetPhysicalDeviceSurfaceFormatsKHR(surface_, &formats_count, nullptr);
     if (result != VK_SUCCESS || formats_count == 0) {
-        logError(LOG_VK "couldn't get the number of supported surface formats: {}", result);
+        error().printLn(LOG_VK "couldn't get the number of supported surface formats: {}", result);
         return false;
     }
 
     formats_.resize(formats_count);
     result = physical_device.vkGetPhysicalDeviceSurfaceFormatsKHR(surface_, &formats_count, formats_.data());
     if (result != VK_SUCCESS || formats_count == 0) {
-        logError(LOG_VK "couldn't enumerate supported surface formats: {}", result);
+        error().printLn(LOG_VK "couldn't enumerate supported surface formats: {}", result);
         return false;
     }
 
@@ -154,7 +154,7 @@ bool Surface::loadPresentQueueFamilies(PhysicalDevice& physical_device) {
     }
 
     if (present_queue_families_.empty()) {
-        logError(LOG_VK "couldn't obtain present queue families");
+        error().printLn(LOG_VK "couldn't obtain present queue families");
         return false;
     }
 
@@ -165,7 +165,7 @@ bool Surface::loadPresentModes(PhysicalDevice& physical_device) {
     std::uint32_t present_mode_count = 0;
     VkResult result = physical_device.vkGetPhysicalDeviceSurfacePresentModesKHR(surface_, &present_mode_count, nullptr);
     if (result != VK_SUCCESS || present_mode_count == 0) {
-        logError(LOG_VK "couldn't get the number of supported present modes: {}", result);
+        error().printLn(LOG_VK "couldn't get the number of supported present modes: {}", result);
         return false;
     }
 
@@ -173,7 +173,7 @@ bool Surface::loadPresentModes(PhysicalDevice& physical_device) {
     result = physical_device.vkGetPhysicalDeviceSurfacePresentModesKHR(surface_, &present_mode_count,
                                                                        present_modes_.data());
     if (result != VK_SUCCESS || present_mode_count == 0) {
-        logError(LOG_VK "couldn't enumerate present modes: {}", result);
+        error().printLn(LOG_VK "couldn't enumerate present modes: {}", result);
         return false;
     }
 

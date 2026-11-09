@@ -1,7 +1,7 @@
 #include "rel/hlsl_compiler.h"  // IWYU pragma: keep
 
 #include "common/dyn_library.h"
-#include "common/logger.h"
+#include "common/log_manager.h"
 #include "util/ref_ptr.h"
 
 #include <uxs/dynarray.h>
@@ -65,25 +65,25 @@ bool HlslCompiler::Implementation::init() {
 
     create_proc_ = (DxcCreateInstanceProc)getDynLibraryEntry(dxcompiler_library_, "DxcCreateInstance");
     if (!create_proc_) {
-        logError("couldn't load DxcCreateInstance function");
+        error().printLn("couldn't load DxcCreateInstance function");
         return false;
     }
 
     HRESULT result = create_proc_(CLSID_DxcUtils, IID_PPV_ARGS(dxc_utils_.reset_and_get_address()));
     if (result != S_OK) {
-        logError("couldn't create DxcUtils object");
+        error().printLn("couldn't create DxcUtils object");
         return false;
     }
 
     result = create_proc_(CLSID_DxcCompiler, IID_PPV_ARGS(dxc_compiler_.reset_and_get_address()));
     if (result != S_OK) {
-        logError("couldn't create DxcCompiler3 object");
+        error().printLn("couldn't create DxcCompiler3 object");
         return false;
     }
 
     result = dxc_utils_->CreateDefaultIncludeHandler(include_handler_.reset_and_get_address());
     if (result != S_OK) {
-        logError("couldn't create DxcIncludeHandler object");
+        error().printLn("couldn't create DxcIncludeHandler object");
         return false;
     }
 

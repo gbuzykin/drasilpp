@@ -51,7 +51,7 @@ bool RenderTarget::create(const uxs::db::value& opts) {
     HRESULT result = device_->getD3D12Device()->CreateDescriptorHeap(&rtv_heap_desc,
                                                                      IID_PPV_ARGS(rtv_heap_.reset_and_get_address()));
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't create RTV heap: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "couldn't create RTV heap: {}", D3D12Result(result));
         return false;
     }
 
@@ -66,7 +66,7 @@ bool RenderTarget::create(const uxs::db::value& opts) {
         result = device_->getD3D12Device()->CreateDescriptorHeap(&dsv_heap_desc,
                                                                  IID_PPV_ARGS(dsv_heap_.reset_and_get_address()));
         if (result != S_OK) {
-            logError(LOG_D3D12 "couldn't create DSV heap: {}", D3D12Result(result));
+            error().printLn(LOG_D3D12 "couldn't create DSV heap: {}", D3D12Result(result));
             return false;
         }
     }
@@ -114,7 +114,7 @@ bool RenderTarget::createFrameResources() {
                 }),
                 kit.depth_stencil_allocation.reset_and_get_address(), IID_NULL, nullptr);
             if (result != S_OK) {
-                logError(LOG_D3D12 "couldn't create depth&stencil resource: {}", D3D12Result(result));
+                error().printLn(LOG_D3D12 "couldn't create depth&stencil resource: {}", D3D12Result(result));
                 return false;
             }
 

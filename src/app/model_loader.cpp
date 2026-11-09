@@ -1,6 +1,6 @@
 #include "model_loader.h"
 
-#include "common/logger.h"
+#include "common/log_manager.h"
 #include "rel/math.h"
 
 #include <tiny_obj_loader.h>
@@ -71,7 +71,7 @@ bool drasilpp::loadModelFromObjFile(const char* filename, LoadModelFlags flags, 
     std::string err;
 
     if (!tinyobj::LoadObj(&attribs, &shapes, &materials, &warn, &err, filename)) {
-        logError("error loading model '{}': {}", filename, err);
+        error().printLn("error loading model '{}': {}", filename, err);
         return false;
     }
 
@@ -100,7 +100,7 @@ bool drasilpp::loadModelFromObjFile(const char* filename, LoadModelFlags flags, 
 
             if (!!(flags & LoadModelFlags::LOAD_NORMALS)) {
                 if (attribs.normals.size() == 0) {
-                    logError("model '{}' has no normals", filename);
+                    error().printLn("model '{}' has no normals", filename);
                     return false;
                 }
                 model.data.push_back(attribs.normals[3 * index.normal_index + 0]);
@@ -110,7 +110,7 @@ bool drasilpp::loadModelFromObjFile(const char* filename, LoadModelFlags flags, 
 
             if (!!(flags & LoadModelFlags::LOAD_TEXCOORDS)) {
                 if (attribs.texcoords.size() == 0) {
-                    logError("model '{}' has no texture coordinates", filename);
+                    error().printLn("model '{}' has no texture coordinates", filename);
                     return false;
                 }
                 model.data.push_back(attribs.texcoords[2 * index.texcoord_index + 0]);
@@ -128,7 +128,7 @@ bool drasilpp::loadModelFromObjFile(const char* filename, LoadModelFlags flags, 
     }
 
     if (model.data.empty()) {
-        logError("model '{}' is empty", filename);
+        error().printLn("model '{}' is empty", filename);
         return false;
     }
 

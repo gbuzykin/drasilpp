@@ -48,7 +48,7 @@ bool Texture::create(const TextureDesc& desc) {
                                                              nullptr, allocation_.reset_and_get_address(), IID_NULL,
                                                              nullptr);
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't create texture resource: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "couldn't create texture resource: {}", D3D12Result(result));
         return false;
     }
 

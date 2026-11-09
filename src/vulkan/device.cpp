@@ -48,7 +48,7 @@ bool Device::create(const uxs::db::value& caps) {
 
     for (const char* extension : device_extensions) {
         if (!physical_device_.isExtensionSupported(extension)) {
-            logError(LOG_VK "device extension '{}' is not supported", extension);
+            error().printLn(LOG_VK "device extension '{}' is not supported", extension);
             return false;
         }
     }
@@ -104,7 +104,7 @@ bool Device::create(const uxs::db::value& caps) {
 
     graphics_queue_.setFamilyIndex(physical_device_.findSuitableQueueFamily(VK_QUEUE_GRAPHICS_BIT));
     if (graphics_queue_.getFamilyIndex() == INVALID_UINT32_VALUE) {
-        logError(LOG_VK "couldn't obtain graphics queue family index");
+        error().printLn(LOG_VK "couldn't obtain graphics queue family index");
         return false;
     }
 
@@ -114,7 +114,7 @@ bool Device::create(const uxs::db::value& caps) {
     if (caps.value<bool>("needs_compute")) {
         compute_queue_.setFamilyIndex(select_queue_family(VK_QUEUE_COMPUTE_BIT));
         if (compute_queue_.getFamilyIndex() == INVALID_UINT32_VALUE) {
-            logError(LOG_VK "couldn't obtain compute queue family index");
+            error().printLn(LOG_VK "couldn't obtain compute queue family index");
             return false;
         }
         add_queue_family(compute_queue_.getFamilyIndex(), priority);
@@ -122,20 +122,20 @@ bool Device::create(const uxs::db::value& caps) {
 
     transfer_queue_.setFamilyIndex(physical_device_.findSuitableQueueFamily(VK_QUEUE_TRANSFER_BIT));
     if (transfer_queue_.getFamilyIndex() == INVALID_UINT32_VALUE) {
-        logError(LOG_VK "couldn't obtain transfer queue family index");
+        error().printLn(LOG_VK "couldn't obtain transfer queue family index");
         return false;
     }
     add_queue_family(transfer_queue_.getFamilyIndex(), priority);
 
     if (transfer_queue_.getFamilyIndex() != graphics_queue_.getFamilyIndex()) {
-        logError(LOG_VK "different transfer and present queue families");
+        error().printLn(LOG_VK "different transfer and present queue families");
         return false;
     }
 
     for (auto* surface : instance_->getSurfaces()) {
         const std::uint32_t family_index = surface->getPresentQueueFamily();
         if (family_index == INVALID_UINT32_VALUE) {
-            logError(LOG_VK "couldn't obtain present queue family index");
+            error().printLn(LOG_VK "couldn't obtain present queue family index");
             return false;
         }
         surface->getPresentQueue().setFamilyIndex(family_index);
@@ -153,7 +153,7 @@ bool Device::create(const uxs::db::value& caps) {
 
     VkResult result = physical_device_.vkCreateDevice(&create_info, nullptr, &device_);
     if (result != VK_SUCCESS || device_ == VK_NULL_HANDLE) {
-        logError(LOG_VK "couldn't create logical device: {}", result);
+        error().printLn(LOG_VK "couldn't create logical device: {}", result);
         return false;
     }
 
@@ -166,7 +166,7 @@ bool Device::create(const uxs::db::value& caps) {
 #define DEVICE_LEVEL_VK_FUNCTION(name) \
     vk_funcs_.name = (PFN_##name)instance_->getVkFuncs().vkGetDeviceProcAddr(device_, #name); \
     if (!vk_funcs_.name) { \
-        logError(LOG_VK "couldn't obtain device-level Vulkan function '{}'", #name); \
+        error().printLn(LOG_VK "couldn't obtain device-level Vulkan function '{}'", #name); \
         return false; \
     }
 
@@ -174,11 +174,11 @@ bool Device::create(const uxs::db::value& caps) {
     if (is_extension_enabled(extension)) { \
         vk_funcs_.name = (PFN_##name)instance_->getVkFuncs().vkGetDeviceProcAddr(device_, #name); \
         if (!vk_funcs_.name) { \
-            logError(LOG_VK "couldn't obtain device-level Vulkan function '{}'", #name); \
+            error().printLn(LOG_VK "couldn't obtain device-level Vulkan function '{}'", #name); \
             return false; \
         } \
     } else { \
-        logError(LOG_VK "device extension '{}' is not enabled", extension); \
+        error().printLn(LOG_VK "device extension '{}' is not enabled", extension); \
         return false; \
     }
 
@@ -206,7 +206,7 @@ bool Device::create(const uxs::db::value& caps) {
 
     result = vmaCreateAllocator(&allocator_create_info, &allocator_);
     if (result != VK_SUCCESS || allocator_ == VK_NULL_HANDLE) {
-        logError(LOG_VK "couldn't create VMA allocator: {}", result);
+        error().printLn(LOG_VK "couldn't create VMA allocator: {}", result);
         return false;
     }
 
@@ -230,7 +230,7 @@ bool Device::createSemaphore(VkSemaphore& semaphore) {
     VkResult result = vkCreateSemaphore(
         constAddressOf(VkSemaphoreCreateInfo{.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO}), nullptr, &semaphore);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't create semaphore: {}", result);
+        error().printLn(LOG_VK "couldn't create semaphore: {}", result);
         return false;
     }
     return true;
@@ -243,7 +243,7 @@ bool Device::createFence(bool signaled, VkFence& fence) {
                                     }),
                                     nullptr, &fence);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't create fence: {}", result);
+        error().printLn(LOG_VK "couldn't create fence: {}", result);
         return false;
     }
     return true;
@@ -252,7 +252,7 @@ bool Device::createFence(bool signaled, VkFence& fence) {
 bool Device::waitForFences(std::span<const VkFence> fences, VkBool32 wait_for_all, std::uint64_t timeout) {
     VkResult result = vkWaitForFences(std::uint32_t(fences.size()), fences.data(), wait_for_all, timeout);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "waiting for fences failed: {}", result);
+        error().printLn(LOG_VK "waiting for fences failed: {}", result);
         return false;
     }
     return true;
@@ -261,7 +261,7 @@ bool Device::waitForFences(std::span<const VkFence> fences, VkBool32 wait_for_al
 bool Device::resetFences(std::span<const VkFence> fences) {
     VkResult result = vkResetFences(std::uint32_t(fences.size()), fences.data());
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "error occurred when tried to reset fences: {}", result);
+        error().printLn(LOG_VK "error occurred when tried to reset fences: {}", result);
         return false;
     }
     return true;
@@ -282,7 +282,7 @@ bool Device::updateBuffer(std::span<const std::uint8_t> data, VkBuffer dst, VkDe
     VkResult result = vmaCopyMemoryToAllocation(allocator_, data.data(), kit.staging_buffer.allocation, 0,
                                                 VkDeviceSize(data.size()));
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't copy to host visible memory: {}", result);
+        error().printLn(LOG_VK "couldn't copy to host visible memory: {}", result);
         return false;
     }
 
@@ -365,7 +365,7 @@ bool Device::updateImage(const std::uint8_t* data, VkImage dst, Format format, s
     VkResult result = vmaCopyMemoryToAllocation(allocator_, data, kit.staging_buffer.allocation, 0,
                                                 VkDeviceSize(total_buf_size));
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't copy to host visible memory: {}", result);
+        error().printLn(LOG_VK "couldn't copy to host visible memory: {}", result);
         return false;
     }
 
@@ -445,7 +445,7 @@ bool Device::updateImage(const std::uint8_t* data, VkImage dst, Format format, s
 bool Device::waitDevice() {
     VkResult result = vkDeviceWaitIdle();
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "waiting for device failed: {}", result);
+        error().printLn(LOG_VK "waiting for device failed: {}", result);
         return false;
     }
     return true;
@@ -474,7 +474,7 @@ bool Device::createStagingBuffer(VkDeviceSize size, StagingBuffer& buffer) {
                                       }),
                                       &buffer.handle, &buffer.allocation, nullptr);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't create buffer: {}", result);
+        error().printLn(LOG_VK "couldn't create buffer: {}", result);
         return false;
     }
 

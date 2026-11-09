@@ -1,6 +1,6 @@
 #include "image_loader.h"
 
-#include "common/logger.h"
+#include "common/log_manager.h"
 
 #include <cstddef>
 #include <memory>
@@ -15,7 +15,7 @@ bool drasilpp::loadImageFromFile(const char* filename, Image& image, std::uint32
         stbi_load(filename, &width, &height, &num_components, num_requested_components), stbi_image_free);
 
     if (!stbi_data || width <= 0 || height <= 0 || num_components <= 0) {
-        logError("error loading image '{}'", filename);
+        error().printLn("error loading image '{}'", filename);
         return false;
     }
 

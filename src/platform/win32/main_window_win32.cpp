@@ -1,6 +1,6 @@
 #include "main_window.h"
 
-#include "common/logger.h"
+#include "common/log_manager.h"
 
 #include <uxs/string_utf.h>
 
@@ -102,7 +102,7 @@ bool MainWindow::Implementation::createWindow(const char* title, std::uint32_t w
     };
 
     if (!::RegisterClassExW(&window_class)) {
-        logError("couldn't register Win32 window class");
+        error().printLn("couldn't register Win32 window class");
         return false;
     }
 
@@ -137,7 +137,7 @@ bool MainWindow::Implementation::createWindow(const char* title, std::uint32_t w
                               WS_OVERLAPPEDWINDOW, win_rect.left, win_rect.top, win_size_.cx, win_size_.cy, NULL, NULL,
                               hinstance, NULL);
     if (!hwnd_) {
-        logError("couldn't create Win32 window");
+        error().printLn("couldn't create Win32 window");
         return false;
     }
 

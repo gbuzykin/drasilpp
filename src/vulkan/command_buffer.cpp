@@ -19,7 +19,7 @@ bool CommandBuffer::beginCommandBuffer(VkCommandBufferUsageFlags usage,
 
     VkResult result = vkBeginCommandBuffer(&begin_info);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't begin command buffer recording operation: {}", result);
+        error().printLn(LOG_VK "couldn't begin command buffer recording operation: {}", result);
         return false;
     }
 
@@ -29,7 +29,7 @@ bool CommandBuffer::beginCommandBuffer(VkCommandBufferUsageFlags usage,
 bool CommandBuffer::endCommandBuffer() {
     VkResult result = vkEndCommandBuffer();
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "error occurred during command buffer recording: {}", result);
+        error().printLn(LOG_VK "error occurred during command buffer recording: {}", result);
         return false;
     }
     return true;

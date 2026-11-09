@@ -220,18 +220,18 @@ bool PipelineLayout::create(const uxs::db::value& config) {
                                                       errors->GetBufferSize()) :
                                      std::string_view{};
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't serialize root signature: {}", D3D12Result(result));
-        logError(LOG_D3D12 "{}", error_text);
+        error().printLn(LOG_D3D12 "couldn't serialize root signature: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "{}", error_text);
         return false;
     }
 
-    if (errors) { logWarning(LOG_D3D12 "{}", error_text); }
+    if (errors) { warning().printLn(LOG_D3D12 "{}", error_text); }
 
     result = device_->getD3D12Device()->CreateRootSignature(0, serialized_root_sig->GetBufferPointer(),
                                                             serialized_root_sig->GetBufferSize(),
                                                             IID_PPV_ARGS(root_signature_.reset_and_get_address()));
     if (result != S_OK) {
-        logError(LOG_D3D12 "couldn't create root signature: {}", D3D12Result(result));
+        error().printLn(LOG_D3D12 "couldn't create root signature: {}", D3D12Result(result));
         return false;
     }
 
@@ -248,7 +248,7 @@ bool PipelineLayout::create(const uxs::db::value& config) {
         HRESULT result = device_->getD3D12Device()->CreateDescriptorHeap(
             &heap_desc, IID_PPV_ARGS(heaps_[n].heap.reset_and_get_address()));
         if (result != S_OK) {
-            logError(LOG_D3D12 "couldn't create descriptor heap: {}", D3D12Result(result));
+            error().printLn(LOG_D3D12 "couldn't create descriptor heap: {}", D3D12Result(result));
             return false;
         }
     }
@@ -262,7 +262,7 @@ bool PipelineLayout::obtainDescriptorSet(std::uint32_t set_layout_index, Descrip
     for (std::uint32_t n = 0; n < std::uint32_t(HeapType::TOTAL_COUNT); ++n) {
         auto& heap = heaps_[n];
         if (heap.total_size - heap.used_size < set_layout.total_desc_sizes[n]) {
-            logError(LOG_D3D12 "out of descriptor heap");
+            error().printLn(LOG_D3D12 "out of descriptor heap");
             return false;
         }
 

@@ -115,7 +115,7 @@ bool PipelineLayout::create(const uxs::db::value& config) {
         VkDescriptorSetLayout set_layout = VK_NULL_HANDLE;
         VkResult result = device_->vkCreateDescriptorSetLayout(&create_info, nullptr, &set_layout);
         if (result != VK_SUCCESS) {
-            logError(LOG_VK "couldn't create layout for descriptor sets: {}", result);
+            error().printLn(LOG_VK "couldn't create layout for descriptor sets: {}", result);
             return false;
         }
 
@@ -130,7 +130,7 @@ bool PipelineLayout::create(const uxs::db::value& config) {
 
     VkResult result = device_->vkCreatePipelineLayout(&create_info, nullptr, &pipeline_layout_);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't create pipeline layout: {}", result);
+        error().printLn(LOG_VK "couldn't create pipeline layout: {}", result);
         return false;
     }
 
@@ -147,7 +147,7 @@ bool PipelineLayout::obtainDescriptorSet(std::uint32_t set_layout_index, Descrip
 
     VkResult result = device_->vkAllocateDescriptorSets(&allocate_info, &handle.handle);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't allocate descriptor sets: {}", result);
+        error().printLn(LOG_VK "couldn't allocate descriptor sets: {}", result);
         return false;
     }
 
@@ -173,7 +173,7 @@ bool PipelineLayout::createDescriptorPool(std::uint32_t total_max_sets,
 
     VkResult result = device_->vkCreateDescriptorPool(&create_info, nullptr, &desc_pool_);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't create descriptor pool: {}", result);
+        error().printLn(LOG_VK "couldn't create descriptor pool: {}", result);
         return false;
     }
 

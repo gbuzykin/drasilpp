@@ -209,7 +209,7 @@ bool Pipeline::create(std::span<IShaderModule* const> shader_modules, const uxs:
     VkResult result = device_->vkCreateGraphicsPipelines(VK_NULL_HANDLE, 1, &graphics_pipeline_create_info, nullptr,
                                                          &pipeline_);
     if (result != VK_SUCCESS) {
-        logError(LOG_VK "couldn't create graphics pipeline: {}", result);
+        error().printLn(LOG_VK "couldn't create graphics pipeline: {}", result);
         return false;
     }
 

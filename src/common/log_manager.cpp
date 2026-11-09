@@ -1,4 +1,4 @@
-#include "common/logger.h"
+#include "common/log_manager.h"
 
 #include <uxs/format_chrono.h>  // IWYU pragma: keep
 #include <uxs/io/iobuf.h>
@@ -13,7 +13,7 @@ namespace {
 uxs::iobuf& g_out = uxs::stdbuf::out();
 uxs::iobuf& g_err = uxs::stdbuf::err();
 std::mutex g_mtx;
-drasilpp::LogLevel g_current_print_level{drasilpp::LogLevel::PR_INFO};
+drasilpp::LogLevel g_current_print_level{drasilpp::LogLevel::LL_INFO};
 
 std::chrono::seconds currentTimeZoneOffset() {
     using namespace std::chrono;
@@ -48,28 +48,22 @@ void drasilpp::detail::vprint(LogLevel level, std::string_view fmt, uxs::format_
 
     std::string_view msg_type;
     switch (level) {
-        case LogLevel::PR_ERROR: msg_type = "\033[0;31merror: "; break;
-        case LogLevel::PR_WARNING: msg_type = "\033[0;35mwarning: "; break;
-        case LogLevel::PR_INFO: break;
-        default: {
-#if !defined(NDEBUG)
-            msg_type = "\033[0;33mdebug: ";
-#else
-            return;
-#endif
-        } break;
+        case LogLevel::LL_ERROR: msg_type = "\033[0;31merror: "; break;
+        case LogLevel::LL_WARNING: msg_type = "\033[0;35mwarning: "; break;
+        case LogLevel::LL_INFO: break;
+        default: msg_type = "\033[0;33mdebug: "; break;
     }
 
     using namespace std::chrono;
     auto now = floor<seconds>(system_clock::now() + currentTimeZoneOffset());
 
-    auto& obuf = level <= LogLevel::PR_WARNING ? g_err : g_out;
+    auto& obuf = level <= LogLevel::LL_WARNING ? g_err : g_out;
 
     using namespace std::literals;
 
     std::lock_guard lk(g_mtx);
     uxs::print(obuf, "{}> {}", now, msg_type);
     uxs::vprint(obuf, fmt, args);
-    if (level != LogLevel::PR_INFO) { obuf.write("\033[0m"sv); }
+    if (level != LogLevel::LL_INFO) { obuf.write("\033[0m"sv); }
     obuf.endl();
 }
