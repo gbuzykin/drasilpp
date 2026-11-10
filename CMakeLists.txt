@@ -36,7 +36,7 @@ endif()
 # Compilation flags
 
 if(MSVC)
-  add_compile_options(/Zc:__cplusplus /utf-8)
+  add_compile_options(/Zc:__cplusplus /Zc:preprocessor /utf-8)
 else()
   add_compile_options(-Wall -pedantic)
   add_compile_options(-Wno-unused-function)
