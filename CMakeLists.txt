@@ -9,6 +9,10 @@ include(FetchContent)
 include(GenerateExportHeader)
 include(GNUInstallDirs)
 
+set(OPTION_LOG_DEBUG_LEVEL
+    1
+    CACHE STRING "Allow debug level logging")
+
 option(OPTION_DEBUG_USE_SANITIZERS "Use Sanitizers for Debug build" ON)
 
 set(INSTALL_WIN32_SYMBOLS_DIR ${CMAKE_INSTALL_BINDIR})

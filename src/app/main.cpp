@@ -11,7 +11,6 @@
 
 #include <uxs/db/json.h>
 #include <uxs/dynarray.h>
-#include <uxs/io/filebuf.h>
 #include <uxs/io/iostate.h>
 
 #include <array>
@@ -237,10 +236,7 @@ int AppMainWindow::init(int argc, char** argv) {
         if (driver_->isSuitablePhysicalDevice(device_index, device_caps_)) { break; }
     }
 
-    if (device_index == device_count) {
-        error().printLn("no suitable physical device");
-        return -1;
-    }
+    if (device_index == device_count) { critical().printLn("no suitable physical device"); }
 
     info().printLn("selecting device #{}", device_index);
 
@@ -445,6 +441,7 @@ bool AppMainWindow::renderScene() {
 int main(int argc, char** argv) {
     try {
         drasilpp::getEnvManager().init(DRASILPP_PROJECT_SHORT_NAME);
+        drasilpp::getLogManager().init(DRASILPP_PROJECT_SHORT_NAME);
         drasilpp::debug().printLn("Home path: {}", drasilpp::getEnvManager().getHomePath());
         drasilpp::debug().printLn("App path: {}", drasilpp::getEnvManager().getAppPath());
 

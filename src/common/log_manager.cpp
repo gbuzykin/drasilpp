@@ -1,69 +1,87 @@
-#include "common/log_manager.h"
+#include "common/log_manager.h"  // IWYU pragma: keep
 
+#include "common/env_manager.h"
+
+#include <uxs/algorithm.h>
 #include <uxs/format_chrono.h>  // IWYU pragma: keep
 #include <uxs/io/iobuf.h>
 
 #include <chrono>
-#include <mutex>
-#ifdef __GNUC__
-#    include <ctime>
+#include <stdexcept>
+
+using namespace drasilpp;
+
+LogManager::LogManager() {
+#if DRASILPP_LOG_DEBUG_LEVEL > 0
+    output_level_ = LogLevel{unsigned(LogLevel::LL_DEBUG) + DRASILPP_LOG_DEBUG_LEVEL - 1};
 #endif
-
-namespace {
-uxs::iobuf& g_out = uxs::stdbuf::out();
-uxs::iobuf& g_err = uxs::stdbuf::err();
-std::mutex g_mtx;
-drasilpp::LogLevel g_current_print_level{drasilpp::LogLevel::LL_INFO};
-
-std::chrono::seconds currentTimeZoneOffset() {
-    using namespace std::chrono;
-    using namespace std::chrono_literals;
-    static std::once_flag fl;
-    static seconds zone_offset;
-    std::call_once(fl, []() {
-#ifdef __GNUC__
-        std::tm tm{};
-        tm.tm_year = 100;
-        tm.tm_mday = 1;
-        std::time_t t = std::mktime(&tm);
-        std::tm gmtm = *std::gmtime(&t);
-
-        zone_offset = sys_days{year_month_day{2000y, January, 1d}} -
-                      sys_days{year_month_day{year{1900 + gmtm.tm_year}, month{1U + unsigned(gmtm.tm_mon)},
-                                              day{unsigned(gmtm.tm_mday)}}} -
-                      hours(gmtm.tm_hour) - minutes(gmtm.tm_min) - seconds(gmtm.tm_sec);
-#else
-        const auto info = current_zone()->get_info(system_clock::now());
-        zone_offset = info.offset;
-#endif
-    });
-    return zone_offset;
 }
-}  // namespace
 
-void drasilpp::setLogLevel(LogLevel level) { g_current_print_level = level; }
+LogManager& LogManager::instance() {
+    static LogManager log_manager;
+    return log_manager;
+}
 
-void drasilpp::detail::vprint(LogLevel level, std::string_view fmt, uxs::format_args args) {
-    if (level > g_current_print_level) { return; }
+void LogManager::init(std::string_view instance_name) {
+    constexpr unsigned max_instance_index = 100;
+    log_file_.close();
 
-    std::string_view msg_type;
-    switch (level) {
-        case LogLevel::LL_ERROR: msg_type = "\033[0;31merror: "; break;
-        case LogLevel::LL_WARNING: msg_type = "\033[0;35mwarning: "; break;
-        case LogLevel::LL_INFO: break;
-        default: msg_type = "\033[0;33mdebug: "; break;
+    for (instance_index_ = 0; instance_index_ < max_instance_index; ++instance_index_) {
+        const auto& local_host = getEnvManager().getLocalHostName();
+        const auto file_name = instance_index_ > 0 ?
+                                   uxs::format("{}-{}.log", instance_name, local_host) :
+                                   uxs::format("{}-{}-{}.log", instance_name, local_host, instance_index_);
+
+        log_file_path_ = (getEnvManager().getHomePath() / file_name).lexically_normal();
+
+        if (log_file_.open(log_file_path_.c_str(), "w")) { break; }
     }
 
+    if (instance_index_ == max_instance_index) { log_file_path_.clear(); }
+
+    uxs::println("----------------------------------------------------------------------");
+    uxs::println("Welcome to {} log manager!", instance_name);
+
+    if (log_file_) { uxs::println("All messages will be written to log file: {}", log_file_path_); }
+}
+
+void LogManager::logMessage(LogLevel level, std::string_view message) {
+    if (level > output_level_) { return; }
+
     using namespace std::chrono;
-    auto now = floor<seconds>(system_clock::now() + currentTimeZoneOffset());
+    const auto current_time = system_clock::now() + seconds{getEnvManager().getCurrentTimeZoneOffset()};
 
-    auto& obuf = level <= LogLevel::LL_WARNING ? g_err : g_out;
+    std::string_view color, prefix;
+    switch (level) {
+        case LogLevel::LL_CRITICAL: color = "\033[1;31m", prefix = "Critical Error: "; break;
+        case LogLevel::LL_ERROR: color = "\033[0;31m", prefix = "Error: "; break;
+        case LogLevel::LL_WARNING: color = "\033[0;35m", prefix = "Warning: "; break;
+        case LogLevel::LL_INFO: color = "\033[0m"; break;
+        default: color = "\033[0;33m", prefix = "Debug: "; break;
+    }
 
-    using namespace std::literals;
+    const auto current_time_sec = floor<seconds>(current_time);
+    const std::uint64_t usecs_since_epoch = duration_cast<microseconds>(current_time.time_since_epoch()).count();
 
-    std::lock_guard lk(g_mtx);
-    uxs::print(obuf, "{}> {}", now, msg_type);
-    uxs::vprint(obuf, fmt, args);
-    if (level != LogLevel::LL_INFO) { obuf.write("\033[0m"sv); }
-    obuf.endl();
+    std::lock_guard lk(mtx_);
+
+    for (auto listener : listeners_) { listener->onLogMessage(usecs_since_epoch, level, message); }
+
+    if (log_file_) { uxs::println(log_file_, "{}> {}{}", current_time_sec, prefix, message); }
+
+    auto& standard_out = level > LogLevel::LL_WARNING ? uxs::stdbuf::out() : uxs::stdbuf::err();
+
+    uxs::println(standard_out, "\033[0;34m{}> {}{}{}\033[0m", current_time_sec, color, prefix, message);
+
+    if (level == LogLevel::LL_CRITICAL) { throw std::runtime_error(std::string{message}); }
+}
+
+void LogManager::registerListener(IListener* listener) {
+    std::lock_guard lk(mtx_);
+    uxs::binary_insert_unique(listeners_, listener);
+}
+
+void LogManager::unregisterListener(IListener* listener) {
+    std::lock_guard lk(mtx_);
+    uxs::binary_erase_one(listeners_, listener);
 }

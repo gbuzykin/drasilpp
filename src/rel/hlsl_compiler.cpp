@@ -9,7 +9,6 @@
 
 #include <atomic>
 #include <cstring>
-#include <mutex>
 
 // clang-format off
 #ifdef _WIN32

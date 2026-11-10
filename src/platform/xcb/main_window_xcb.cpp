@@ -9,7 +9,6 @@
 #include <chrono>
 #include <cstdlib>
 #include <cstring>
-#include <vector>
 
 using namespace drasilpp;
 

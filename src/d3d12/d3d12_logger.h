@@ -3,11 +3,8 @@
 #include "common/log_manager.h"  // IWYU pragma: keep
 
 #include <uxs/format_common.h>
-#include <uxs/string_conv.h>
 
 #include <d3d12.h>
-
-#include <cstdint>
 
 #ifdef min
 #    undef min
