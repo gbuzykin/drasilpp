@@ -10,6 +10,13 @@ generate_export_header(
 
 target_link_libraries(drasilpp-common PUBLIC UXS::UXS)
 
+if(WIN32)
+  target_link_libraries(drasilpp-common PRIVATE Ws2_32 Userenv)
+endif()
+
+target_compile_definitions(
+  drasilpp-common PRIVATE DRASILPP_LOG_DEBUG_LEVEL=${OPTION_LOG_DEBUG_LEVEL})
+
 install(
   TARGETS drasilpp-common
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT binaries

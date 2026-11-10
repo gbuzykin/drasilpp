@@ -3,6 +3,7 @@
 #include "model_loader.h"
 
 #include "common/dyn_library.h"
+#include "common/env_manager.h"
 #include "common/log_manager.h"
 #include "interfaces/i_rendering_driver.h"
 #include "rel/camera.h"
@@ -443,7 +444,9 @@ bool AppMainWindow::renderScene() {
 
 int main(int argc, char** argv) {
     try {
-        setLogLevel(LogLevel::LL_DEBUG);
+        drasilpp::getEnvManager().init(DRASILPP_PROJECT_SHORT_NAME);
+        drasilpp::debug().printLn("Home path: {}", drasilpp::getEnvManager().getHomePath());
+        drasilpp::debug().printLn("App path: {}", drasilpp::getEnvManager().getAppPath());
 
         AppMainWindow win;
 
