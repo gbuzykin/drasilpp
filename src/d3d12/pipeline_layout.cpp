@@ -220,12 +220,11 @@ bool PipelineLayout::create(const uxs::db::value& config) {
                                                       errors->GetBufferSize()) :
                                      std::string_view{};
     if (result != S_OK) {
-        error().printLn(LOG_D3D12 "couldn't serialize root signature: {}", D3D12Result(result));
-        error().printLn(LOG_D3D12 "{}", error_text);
+        error().printLn(LOG_D3D12 "couldn't serialize root signature: {}:\n{}", D3D12Result(result), error_text);
         return false;
     }
 
-    if (errors) { warning().printLn(LOG_D3D12 "{}", error_text); }
+    if (errors) { warning().printLn(LOG_D3D12 "root signature compiled with warnings:\n{}", error_text); }
 
     result = device_->getD3D12Device()->CreateRootSignature(0, serialized_root_sig->GetBufferPointer(),
                                                             serialized_root_sig->GetBufferSize(),

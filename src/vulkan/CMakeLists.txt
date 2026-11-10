@@ -6,7 +6,11 @@ file(GLOB_RECURSE REL_VULKAN_SRC_FILES *.h;*.cpp)
 
 add_library(drasilpp-rel-vulkan SHARED ${REL_VULKAN_SRC_FILES})
 
-target_include_directories(drasilpp-rel-vulkan PRIVATE $ENV{VULKAN_SDK}/include)
+if(DEFINED ENV{VULKAN_SDK})
+  target_include_directories(drasilpp-rel-vulkan
+                             PRIVATE $ENV{VULKAN_SDK}/include)
+endif()
+
 target_link_libraries(drasilpp-rel-vulkan
                       PRIVATE drasilpp-rel GPUOpen::VulkanMemoryAllocator)
 

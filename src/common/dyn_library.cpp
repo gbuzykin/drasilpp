@@ -8,33 +8,34 @@
 
 #if defined(WIN32)
 #    include <windows.h>
+
+#    include <memory>
+#    define DYN_LIBRARY_PREFIX ""
+#    define DYN_LIBRARY_SUFFIX ".dll"
 #elif defined(__linux__)
 #    include <dlfcn.h>
+#    define DYN_LIBRARY_PREFIX "lib"
+#    define DYN_LIBRARY_SUFFIX ".so"
 #endif
 
 using namespace drasilpp;
 
 void* drasilpp::loadDynLibrary(const std::filesystem::path& library_dir, std::string_view library_name) {
-    std::filesystem::path library_path(uxs::utf_native_path_adapter{}(library_name));
+    const auto library_full_name = library_name.starts_with(DYN_LIBRARY_PREFIX) ?
+                                       std::string{library_name} + DYN_LIBRARY_SUFFIX :
+                                       DYN_LIBRARY_PREFIX + std::string{library_name} + DYN_LIBRARY_SUFFIX;
 
-#if defined(WIN32)
-    library_path += ".dll";
-#elif defined(__linux__)
-    if (!library_name.starts_with("lib")) { library_path = "lib" + library_path.native(); }
-    library_path += ".so";
-#endif
-
+    std::filesystem::path library_path(uxs::utf_native_path_adapter{}(library_full_name));
     if (!library_dir.empty()) {
         library_path = library_dir / library_path;
 #if defined(__linux__)
         if (!library_dir.is_absolute()) { library_path = "../lib" / library_path; }
 #endif
-        try {
-            library_path = std::filesystem::canonical(library_path);
-        } catch (const std::filesystem::filesystem_error& e) {
-            error().printLn("couldn't find dynamic library '{}': {}", library_path.filename(), e.what());
+        if (!std::filesystem::exists(library_path)) {
+            error().printLn("couldn't find dynamic library '{}'", library_path.filename());
             return nullptr;
         }
+        library_path = std::filesystem::canonical(library_path);
     }
 
     std::string error_message;
@@ -43,17 +44,11 @@ void* drasilpp::loadDynLibrary(const std::filesystem::path& library_dir, std::st
     void* library = ::LoadLibraryW(library_path.c_str());
     if (!library) {
         DWORD error_code = ::GetLastError();
-        WCHAR* buffer = nullptr;
-        try {
-            ::FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr, error_code,
-                             MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT), (LPWSTR)&buffer, 0, nullptr);
-            if (buffer) {
-                error_message = uxs::utf_string_adapter<char>{}(buffer);
-                ::LocalFree(buffer);
-            }
-        } catch (...) {
-            if (buffer) { ::LocalFree(buffer); }
-            throw;
+        WCHAR* ptr = nullptr;
+        ::FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr, error_code,
+                         MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT), (LPWSTR)&ptr, 0, nullptr);
+        if (std::unique_ptr<WCHAR, HLOCAL (*)(HLOCAL)> buffer(ptr, ::LocalFree); buffer.get()) {
+            error_message = uxs::utf_string_adapter<char>{}(buffer.get());
         }
     }
 #elif defined(__linux__)

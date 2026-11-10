@@ -16,7 +16,6 @@
 #include <array>
 #include <chrono>
 #include <exception>
-#include <string>
 #include <thread>
 #include <utility>
 
@@ -214,13 +213,16 @@ int AppMainWindow::init(int argc, char** argv) {
                                                                       "drasilppGetRenderingDriverDescriptor");
     if (!entry) { return -1; }
 
-    const auto app_info = R"({"name": "DrasilPP", "version": [1, 0, 0]})"_json;
+    uxs::db::value app_info;
+
+    app_info["app_name"] = DRASILPP_PROJECT_SHORT_NAME " App";
+    app_info["app_version"] = {1, 0, 0};
+    app_info["engine_name"] = DRASILPP_PROJECT_SHORT_NAME;
+    app_info["engine_version"] = {1, 0, 0};
 
     if (!(driver_ = entry()->create_func()) || !driver_->init(app_info)) { return -1; }
 
-    auto name = app_info.value<std::string>("name");
-
-    if (!createWindow(app_info.value_or<const char*>("name", ""), 1280, 1024)) { return -1; }
+    if (!createWindow(app_info.value_or<const char*>("app_name", ""), 1280, 1024)) { return -1; }
 
     if (!(surface_ = driver_->createSurface(getWindowDescriptor()))) { return -1; }
 
@@ -272,19 +274,17 @@ std::shared_ptr<rel::IShaderModule> AppMainWindow::compileShaderModule(const cha
         rel::DataBlob compiler_output;
         auto shader_binary = driver_->compileShader(shader_text, args, compiler_output);
         if (!shader_binary) {
-            error().printLn("couldn't compile shader '{}'", filename);
-            error().printLn("{}", compiler_output.getTextView());
+            error().printLn("couldn't compile shader '{}':\n{}", filename, compiler_output.getTextView());
             return nullptr;
         }
 
         if (!compiler_output.isEmpty()) {
-            warning().printLn("shader '{}' compiled with warnings", filename);
-            warning().printLn("{}", compiler_output.getTextView());
+            warning().printLn("shader '{}' compiled with warnings:\n{}", filename, compiler_output.getTextView());
         }
 
         return driver_->createShaderModule(device_, std::move(*shader_binary));
     } else {
-        error().printLn("couldn't open '{}' shader file", filename);
+        error().printLn("couldn't open shader file '{}'", filename);
     }
 
     return nullptr;
@@ -443,9 +443,10 @@ bool AppMainWindow::renderScene() {
 
 int main(int argc, char** argv) {
     try {
+        setLogLevel(LogLevel::LL_DEBUG);
+
         AppMainWindow win;
 
-        setLogLevel(LogLevel::LL_DEBUG);
         int init_result = win.init(argc, argv);
         if (init_result != 0) { return init_result; }
 

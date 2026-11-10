@@ -90,7 +90,7 @@ MainWindow::Implementation::~Implementation() {
 
 bool MainWindow::Implementation::createWindow(const char* title, std::uint32_t width, std::uint32_t height) {
     HINSTANCE hinstance = ::GetModuleHandleW(NULL);
-    const wchar_t* window_class_name = L"DrasilPP Window Class";
+    LPCWSTR window_class_name = L"drasilpp::MainWindow Window Class";
     WNDCLASSEXW window_class = {
         .cbSize = sizeof(WNDCLASSEX),
         .style = CS_HREDRAW | CS_VREDRAW,

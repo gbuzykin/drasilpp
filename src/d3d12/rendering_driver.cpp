@@ -23,7 +23,7 @@ using namespace drasilpp::rel::d3d12;
 
 RenderingDriver::RenderingDriver() {}
 
-RenderingDriver::~RenderingDriver() { debug().printLn(LOG_D3D12 "destroy RenderingDriver"); }
+RenderingDriver::~RenderingDriver() { debug().printLn(LOG_D3D12 "destroying RenderingDriver"); }
 
 //@{ IRenderingDriver
 

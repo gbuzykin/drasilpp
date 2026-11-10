@@ -27,8 +27,8 @@ using namespace drasilpp::rel::vulkan;
 RenderingDriver::RenderingDriver() {}
 
 RenderingDriver::~RenderingDriver() {
-    debug().printLn(LOG_VK "destroy RenderingDriver");
-    vkDestroyInstance(nullptr);
+    debug().printLn(LOG_VK "destroying RenderingDriver");
+    if (instance_) { vkDestroyInstance(nullptr); }
     freeDynLibrary(vulkan_library_);
 }
 
@@ -246,16 +246,17 @@ bool RenderingDriver::createInstance(const uxs::db::value& app_info) {
         }
     }
 
-    const auto version = app_info.value("version");
+    const auto app_version = app_info.value("app_version");
+    const auto engine_version = app_info.value("engine_version");
 
     const VkApplicationInfo vk_app_info{
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-        .pApplicationName = app_info.value_or<const char*>("name", ""),
-        .applicationVersion = VK_MAKE_VERSION(version.value<std::uint32_t>("major"),
-                                              version.value<std::uint32_t>("minor"),
-                                              version.value<std::uint32_t>("patch")),
-        .pEngineName = "DrasilPP Vulkan Rendering Driver",
-        .engineVersion = VK_MAKE_VERSION(1, 0, 0),
+        .pApplicationName = app_info.value_or<const char*>("app_name", ""),
+        .applicationVersion = VK_MAKE_VERSION(app_version.value<std::uint32_t>(0), app_version.value<std::uint32_t>(1),
+                                              app_version.value<std::uint32_t>(2)),
+        .pEngineName = app_info.value_or<const char*>("engine_name", ""),
+        .engineVersion = VK_MAKE_VERSION(engine_version.value<std::uint32_t>(0), engine_version.value<std::uint32_t>(1),
+                                         engine_version.value<std::uint32_t>(2)),
         .apiVersion = VK_API_VERSION_1_2,
     };
 

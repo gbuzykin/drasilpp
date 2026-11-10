@@ -781,7 +781,6 @@ static std::wstring LongPathW(const std::wstring &wpath) {
 
 // Standard headers needed by the embedded fast_float.
 #include <cfloat>
-#include <cstdint>
 
 namespace tinyobj_ff {
 

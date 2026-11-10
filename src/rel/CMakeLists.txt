@@ -7,7 +7,10 @@ generate_export_header(
   drasilpp-rel EXPORT_FILE_NAME ${PROJECT_BINARY_DIR}/generated/rel/config.h
   INCLUDE_GUARD_NAME DRASILPP_REL_H)
 
-target_include_directories(drasilpp-rel PRIVATE $ENV{VULKAN_SDK}/include)
+if(DEFINED ENV{VULKAN_SDK})
+  target_include_directories(drasilpp-rel PRIVATE $ENV{VULKAN_SDK}/include)
+endif()
+
 target_link_libraries(drasilpp-rel PUBLIC drasilpp-common)
 
 install(

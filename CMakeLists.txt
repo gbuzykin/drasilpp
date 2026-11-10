@@ -101,6 +101,9 @@ endif()
 
 add_executable(drasilpp ${DRASILPP_SRC_FILES} ${DRASILPP_PLATFORM_SRC_FILES})
 
+target_compile_definitions(
+  drasilpp PRIVATE DRASILPP_PROJECT_SHORT_NAME=\"${CMAKE_PROJECT_NAME}\")
+
 target_include_directories(drasilpp
                            PRIVATE ${CMAKE_SOURCE_DIR}/3rdparty/stb_image)
 target_include_directories(drasilpp
