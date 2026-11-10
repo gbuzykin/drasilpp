@@ -5,6 +5,7 @@
 #include "common/dyn_library.h"
 #include "common/env_manager.h"
 #include "common/log_manager.h"
+#include "common/rtti_base.h"
 #include "interfaces/i_rendering_driver.h"
 #include "rel/camera.h"
 #include "util/range_helpers.h"
@@ -18,6 +19,39 @@
 #include <exception>
 #include <thread>
 #include <utility>
+
+namespace drasilpp {
+
+class I {
+ public:
+    virtual ~I() = default;
+};
+
+class A : public RttiBase, public I {
+    DRASILPP_IMPLEMENT_DYNAMIC_CAST(AsIface<I>);
+};
+
+template<typename Ty>
+class I_T {
+ public:
+    virtual ~I_T() = default;
+};
+
+template<typename Ty>
+class A_T : public RttiBase, public I_T<Ty> {
+    DRASILPP_IMPLEMENT_DYNAMIC_CAST(AsIface<I_T<Ty>>);
+};
+
+}  // namespace drasilpp
+
+DRASILPP_DECLARE_CLASS_NAME(int);
+DRASILPP_DECLARE_CLASS_NAME(drasilpp::I);
+DRASILPP_DECLARE_CLASS_NAME(drasilpp::A);
+DRASILPP_DECLARE_TEMPLATE_CLASS_NAME(drasilpp::I_T);
+DRASILPP_DECLARE_TEMPLATE_CLASS_NAME(drasilpp::A_T);
+
+auto a = std::make_shared<drasilpp::A>();
+auto a_t = std::make_shared<drasilpp::A_T<int>>();
 
 using namespace drasilpp;
 
